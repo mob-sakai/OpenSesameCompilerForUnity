@@ -1,0 +1,25 @@
+name: release
+
+on:
+  push:
+    branches:
+      - preview
+      - master
+    tags:
+      - '!*'
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v1.0.0
+
+      - uses: actions/setup-node@v1.2.0
+        with:
+          node-version: 12
+
+      - name: Release
+        run: npx upm-release --pkg-root Packages/com.coffee.open-sesame-compiler --debug
+        env:
+          NPM_TOKEN: ${{secrets.NPM_TOKEN}}
+          GH_TOKEN: ${{secrets.GH_TOKEN}}
