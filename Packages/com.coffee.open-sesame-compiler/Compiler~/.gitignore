@@ -1,0 +1,14 @@
+# Windows
+Thumbs.db
+Desktop.ini
+
+# macOS
+.DS_Store
+
+.vs/
+bin/
+obj/
+*.sln
+*.log
+node_modules
+package-lock.json
