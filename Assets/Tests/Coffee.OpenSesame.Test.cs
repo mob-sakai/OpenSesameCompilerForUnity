@@ -1,13 +1,6 @@
-﻿using UnityEngine;
-using UnityEditor;
-using UnityEditor.Scripting.Compilers;
-using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
-using System.Runtime.CompilerServices;
-using UnityEditor.Utils;
+﻿using System.Collections;
 using NUnit.Framework;
+using UnityEditor;
 using UnityEngine;
 using UnityEngine.TestTools;
 
