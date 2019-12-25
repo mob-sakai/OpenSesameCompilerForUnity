@@ -27,7 +27,7 @@ namespace Coffee.OpenSesameCompilers
             // Overwrite target assembly for c#.
             foreach (var ta in EditorBuildRules.GetPredefinedTargetAssemblies()
                 .Where(x => x != null && x.Language != null)
-                .Where(x => typeof(CSharpLanguage).IsAssignableFrom(x.Language.GetType())))
+                .Where(x => x.Language.GetType() == typeof(CSharpLanguage)))
             {
                 Debug.LogFormat("<b>[OpenSesame]</b><color=magenta>[Installer]</color> {0} will be replaced.", ta.Language.GetLanguageName());
                 ta.Language = customLanguage;
