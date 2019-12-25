@@ -15,7 +15,7 @@ namespace Coffee.OpenSesameCompilers
             var customLanguage = new CSharpLanguageForOpenSesame();
 
             // Remove old custom compilers.
-            ScriptCompilers.SupportedLanguages.RemoveAll(x => x.GetType() == typeof(CSharpLanguageForOpenSesame));
+            ScriptCompilers.SupportedLanguages.RemoveAll(x => typeof(CSharpLanguage).IsAssignableFrom(x.GetType()));
             ScriptCompilers.SupportedLanguages.Insert(0, customLanguage);
 
             // Use reflection to overwrite 'readonly field'.
