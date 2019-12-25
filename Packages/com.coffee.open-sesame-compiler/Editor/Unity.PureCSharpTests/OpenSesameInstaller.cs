@@ -12,11 +12,12 @@ namespace Coffee.OpenSesameCompilers
     {
         static OpenSesameInstaller()
         {
-            var customLanguage = new CSharpLanguageForOpenSesame();
+            var customLanguage = new OpenSesameCSharpLanguage();
 
             // Remove old custom compilers.
-            ScriptCompilers.SupportedLanguages.RemoveAll(x => typeof(CSharpLanguage).IsAssignableFrom(x.GetType()));
+            int removed = ScriptCompilers.SupportedLanguages.RemoveAll(x => typeof(CSharpLanguage).IsAssignableFrom(x.GetType()));
             ScriptCompilers.SupportedLanguages.Insert(0, customLanguage);
+            Debug.LogFormat("<b>[OpenSesame]</b><color=magenta>[Installer]</color> {0} langages has been removed.", removed);
 
             // Use reflection to overwrite 'readonly field'.
             typeof(ScriptCompilers)
@@ -24,10 +25,15 @@ namespace Coffee.OpenSesameCompilers
                 .SetValue(null, customLanguage);
 
             // Overwrite target assembly for c#.
-            EditorBuildRules.GetPredefinedTargetAssemblies()
+            foreach (var ta in EditorBuildRules.GetPredefinedTargetAssemblies()
                 .Where(x => x != null && x.Language != null)
-                .First(x => x.Language.GetType() == typeof(CSharpLanguage))
-                .Language = customLanguage;
+                .Where(x => typeof(CSharpLanguage).IsAssignableFrom(x.Language.GetType())))
+            {
+                Debug.LogFormat("<b>[OpenSesame]</b><color=magenta>[Installer]</color> {0} will be replaced.", ta.Language.GetLanguageName());
+                ta.Language = customLanguage;
+            }
+
+            Debug.LogFormat("<b>[OpenSesame]</b><color=magenta>[Installer]</color> {0} has been installed.", typeof(OpenSesameCSharpLanguage).Name);
         }
     }
 }

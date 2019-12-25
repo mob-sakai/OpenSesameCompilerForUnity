@@ -1,4 +1,5 @@
-﻿using System.Diagnostics;
+﻿using System;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using UnityEditor;
@@ -39,9 +40,14 @@ namespace Coffee.OpenSesameCompilers
             var outopt = string.Format("/out:\"{0}\"", m_Island._output);
             var responsefile = Directory.GetFiles("Temp", "UnityTempFile*")
                     .OrderByDescending(f => File.GetLastWriteTime(f))
-                    .First(path => File.ReadAllLines(path).Any(line => line.Contains(outopt)));
+                    .First(path => File.ReadAllLines(path).Any(line => line.Contains(outopt)))
+                    .Replace(Environment.CurrentDirectory + Path.DirectorySeparatorChar, "");
             var outputPath = scriptAssembly.FullPath;
 #endif
+
+            Debug.Log("<b>[OpenSesame]</b><color=orange>[Compiler]</color> outopt: " + outopt);
+            Debug.Log("<b>[OpenSesame]</b><color=orange>[Compiler]</color> responsefile: " + responsefile);
+            Debug.Log("<b>[OpenSesame]</b><color=orange>[Compiler]</color> outputPath: " + outputPath);
 
             // Start compiling with dotnet app
             const string compiler = "Packages/com.coffee.open-sesame-compiler/Compiler~";
@@ -56,12 +62,16 @@ namespace Coffee.OpenSesameCompilers
             if (Application.platform != RuntimePlatform.WindowsEditor)
                 psi.FileName = "/usr/local/share/dotnet/dotnet";
 
+            Debug.LogFormat("<b>[OpenSesame]</b><color=orange>[Compiler]</color> Execute: {0} {1}", psi.FileName, psi.Arguments);
+
             var program = new Program(psi);
             program.Start((s, e) =>
             // Exit callback
             {
                 if (program.ExitCode == 0)
                 {
+                    Debug.LogFormat("<b>[OpenSesame]</b><color=orange>[Compiler]</color> <color=green>Success:</color> {0}", scriptAssembly.FullPath);
+
                     // If dll published, reimport assembly.
                     if (!Path.GetDirectoryName(outputPath).StartsWith("Library/ScriptAssemblies"))
                     {
@@ -74,6 +84,8 @@ namespace Coffee.OpenSesameCompilers
                 // Show error logs.
                 foreach (var l in File.ReadAllLines(responsefile + ".log"))
                     UnityEngine.Debug.LogError(l);
+
+                Debug.LogFormat("<b>[OpenSesame]</b><color=orange>[Compiler]</color> <color=red>Failure:</color> {0}", scriptAssembly.FullPath);
             });
 
             return program;

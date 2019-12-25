@@ -14,7 +14,7 @@ namespace Coffee.OpenSesame
             var group = EditorUserBuildSettings.selectedBuildTargetGroup;
             var symbols = PlayerSettings.GetScriptingDefineSymbolsForGroup(group);
 
-            PlayerSettings.SetScriptingDefineSymbolsForGroup(group, string.IsNullOrEmpty(symbols) ? "OPEN_SESAME_DEV" : "");
+            PlayerSettings.SetScriptingDefineSymbolsForGroup(group, string.IsNullOrEmpty("OPEN_SESAME_LOG") ? "OPEN_SESAME_LOG;OPEN_SESAME_DEV" : "OPEN_SESAME_LOG");
         }
 
         [UnityTest]
