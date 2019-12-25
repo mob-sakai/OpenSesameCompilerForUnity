@@ -1,3 +1,15 @@
+# [1.0.0-preview.3](https://github.com/mob-sakai/OpenSesameCompilerForUnity/compare/v1.0.0-preview.2...v1.0.0-preview.3) (2019-12-25)
+
+
+### Bug Fixes
+
+* overwrite predefined target assemblies ([e062393](https://github.com/mob-sakai/OpenSesameCompilerForUnity/commit/e0623934c7740a69467553738d072cc1428808ff))
+
+
+### Features
+
+* support 2019.3 ([d7fab1a](https://github.com/mob-sakai/OpenSesameCompilerForUnity/commit/d7fab1a069df43f002c14a1de7471d39a193fe55))
+
 # [1.0.0-preview.2](https://github.com/mob-sakai/OpenSesameCompilerForUnity/compare/v1.0.0-preview.1...v1.0.0-preview.2) (2019-12-25)
 
 
