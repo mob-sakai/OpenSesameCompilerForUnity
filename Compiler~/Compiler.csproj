@@ -1,0 +1,27 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>netcoreapp3.0</TargetFramework>
+    <PackAsTool>true</PackAsTool>
+    <PackageId>NoAccessibilityCompiler</PackageId>
+    <PackageVersion>0.2.0</PackageVersion>
+    <Authors>mob-sakai</Authors>
+    <Copyright>mob-sakai</Copyright>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <PackageProjectUrl>https://github.com/mob-sakai/NoAccessibilityCompiler</PackageProjectUrl>
+    <Description>A Roslyn compiler without accessibility check</Description>
+    <PackageIcon>icon.png</PackageIcon>
+    <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
+  </PropertyGroup>
+  <ItemGroup>
+    <None Include="icon.png" Pack="true" PackagePath="\" />
+    <Compile Include="src/*.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="3.3.1" />
+    <PackageReference Include="CommandLineParser" Version="2.3.0" />
+    <PackageReference Include="Serilog.Sinks.ColoredConsole" Version="3.0.1" />
+    <PackageReference Include="Serilog.Sinks.File" Version="4.1.0" />
+    <PackageReference Include="Mono.Cecil" Version="0.11.1" />
+  </ItemGroup>
+</Project>
