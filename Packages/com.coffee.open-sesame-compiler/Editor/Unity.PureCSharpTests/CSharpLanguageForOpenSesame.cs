@@ -11,11 +11,19 @@ namespace Coffee.OpenSesameCompilers
 {
     internal class CSharpLanguageForOpenSesame : CSharpLanguage
     {
-        public override ScriptCompilerBase CreateCompiler(ScriptAssembly scriptAssembly, MonoIsland island, bool buildingForEditor, BuildTarget targetPlatform, bool runUpdater)
+#if UNITY_2019_3_OR_NEWER
+        public override ScriptCompilerBase CreateCompiler(ScriptAssembly scriptAssembly, EditorScriptCompilationOptions options, string tempOutputDirectory)
+#else
+		public override ScriptCompilerBase CreateCompiler(ScriptAssembly scriptAssembly, MonoIsland island, bool buildingForEditor, BuildTarget targetPlatform, bool runUpdater)
+#endif
         {
             // No asmdef -> default compiler
             if (string.IsNullOrEmpty(scriptAssembly.OriginPath))
-                return base.CreateCompiler(scriptAssembly, island, buildingForEditor, targetPlatform, runUpdater);
+#if UNITY_2019_3_OR_NEWER
+                return base.CreateCompiler(scriptAssembly, options, tempOutputDirectory);
+#else
+				return base.CreateCompiler(scriptAssembly, island, buildingForEditor, targetPlatform, runUpdater);
+#endif
 
             // Do not use OpenSesameCompiler -> default compiler
             var asmdefPath = Directory.GetFiles(scriptAssembly.OriginPath, "*.asmdef").Select(x => x.Replace(Environment.CurrentDirectory + Path.DirectorySeparatorChar, "")).FirstOrDefault();
@@ -23,7 +31,11 @@ namespace Coffee.OpenSesameCompilers
 
             // No OpenSesameCompiler setting in meta.
             if (setting == null || !setting.OpenSesameCompiler)
-                return base.CreateCompiler(scriptAssembly, island, buildingForEditor, targetPlatform, runUpdater);
+#if UNITY_2019_3_OR_NEWER
+                return base.CreateCompiler(scriptAssembly, options, tempOutputDirectory);
+#else
+				return base.CreateCompiler(scriptAssembly, island, buildingForEditor, targetPlatform, runUpdater);
+#endif
 
             // If publish is set, change output path.
             var path = OpenSesameSetting.PublishOrigin;
@@ -42,7 +54,12 @@ namespace Coffee.OpenSesameCompilers
             }
 
             // Use OpenSesameCompiler.
-            return new OpenSesameCompiler(scriptAssembly, island, runUpdater);
+#if UNITY_2019_3_OR_NEWER
+            return new OpenSesameCompiler(scriptAssembly, options, tempOutputDirectory);
+#else
+			return new OpenSesameCompiler(scriptAssembly, island, runUpdater);
+#endif
         }
+
     }
 }
