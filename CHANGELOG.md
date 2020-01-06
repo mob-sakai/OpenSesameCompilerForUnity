@@ -1,3 +1,13 @@
+# [1.0.0-preview.4](https://github.com/mob-sakai/OpenSesameCompilerForUnity/compare/v1.0.0-preview.3...v1.0.0-preview.4) (2020-01-06)
+
+
+### Features
+
+* add/remove scripting define symbols each assemblies ([101b587](https://github.com/mob-sakai/OpenSesameCompilerForUnity/commit/101b587e0f70ebb0d655071d0b07d6d81d68c475)), closes [#12](https://github.com/mob-sakai/OpenSesameCompilerForUnity/issues/12)
+* modify symbols in csproj ([47eef0e](https://github.com/mob-sakai/OpenSesameCompilerForUnity/commit/47eef0e174881e4f841e2bb9080714f87a0cf231))
+* refactor setting ([5e5e869](https://github.com/mob-sakai/OpenSesameCompilerForUnity/commit/5e5e8696315694346cf2fcea4716eaa78ca756fd))
+* use Microsoft.Net.Compilers to compile ([d9b4648](https://github.com/mob-sakai/OpenSesameCompilerForUnity/commit/d9b464876df8308899e57297aebe2a0457de88f0)), closes [#11](https://github.com/mob-sakai/OpenSesameCompilerForUnity/issues/11)
+
 # [1.0.0-preview.3](https://github.com/mob-sakai/OpenSesameCompilerForUnity/compare/v1.0.0-preview.2...v1.0.0-preview.3) (2019-12-25)
 
 
