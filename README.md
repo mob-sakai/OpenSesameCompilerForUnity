@@ -94,7 +94,8 @@ Or, use [UpmGitExtension](https://github.com/mob-sakai/UpmGitExtension).
 ![](https://user-images.githubusercontent.com/12690315/71836600-ad411380-30f7-11ea-8295-45fac816437a.png)
    * **Open Sesame**: Use OpenSesameCompiler instead of default csc to compile this assembly. In other words, allow this assembly to access to internals/privates to other assemblies without reflection.
    * **Symbols**: how/hide the scripting define symbols to modify for this assembly.
-     * **Modify Symbols**: When compiling this assembly, add/remove semicolon separated symbols. Symbols starting with '!' will be removed.
+     * **Modify Symbols**: When compiling this assembly, add/remove semicolon separated symbols. Symbols starting with '!' will be removed.  
+     **NOTE: This feature is available even when 'Open Sesame' is disabled** 
    * **Publish**: Publish this assembly as dll to the parent directory.
    * **Help**: Open help page on browser.
 3. Enjoy!
@@ -174,4 +175,11 @@ For more details, see [the article 1 (Japanese)](https://qiita.com/mob-sakai/ite
 * Issue tracker : https://github.com/mob-sakai/OpenSesameCompilerForUnity/issues
 * Change log : https://github.com/mob-sakai/OpenSesameCompilerForUnity/blob/upm/CHANGELOG.md
 * [No InternalsVisibleTo, no problem – bypassing C# visibility rules with Roslyn](https://www.strathweb.com/2018/10/no-internalvisibleto-no-problem-bypassing-c-visibility-rules-with-roslyn/)
-* Nuget tool version: https://www.nuget.org/packages/InternalAccessibleCompiler
+* Nuget version: https://www.nuget.org/packages/OpenSesameCompiler
+* asmdefScriptingDefines(@pCYSl5EDgo) : https://github.com/pCYSl5EDgo/asmdefScriptingDefines
+* Csc-Manager(@pCYSl5EDgo) : https://github.com/pCYSl5EDgo/Csc-Manager
+
+
+## Special Thanks
+
+* Special thanks to @pCYSl5EDgo, your ideas contributed to improve this package.
