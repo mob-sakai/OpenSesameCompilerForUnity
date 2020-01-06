@@ -16,8 +16,6 @@ namespace Coffee.OpenSesameCompilers
         {
             var asmdefPath = CompilationPipeline.GetAssemblyDefinitionFilePathFromAssemblyName(Path.GetFileName(path).Replace(".csproj", ""));
             var setting = OpenSesameSetting.GetAtPathOrDefault(asmdefPath);
-            Debug.LogFormat("<color=blue>OnGeneratedCSProject:</color> {0}, {1}, {2}", path, asmdefPath, setting.ModifySymbols);
-
             if (setting == null || string.IsNullOrEmpty(setting.ModifySymbols))
                 return content;
 
@@ -29,8 +27,6 @@ namespace Coffee.OpenSesameCompilers
                 .Except(toRemove)
                 .Distinct()
                 .ToArray();
-
-            Debug.Log(s_DefineConstants.Replace(content, string.Format("<DefineConstants>{0}</DefineConstants>", string.Join(";", modified))));
 
             return s_DefineConstants.Replace(content, string.Format("<DefineConstants>{0}</DefineConstants>", string.Join(";", modified)));
         }
