@@ -176,10 +176,10 @@ For more details, see [the article 1 (Japanese)](https://qiita.com/mob-sakai/ite
 * Change log : https://github.com/mob-sakai/OpenSesameCompilerForUnity/blob/upm/CHANGELOG.md
 * [No InternalsVisibleTo, no problem – bypassing C# visibility rules with Roslyn](https://www.strathweb.com/2018/10/no-internalvisibleto-no-problem-bypassing-c-visibility-rules-with-roslyn/)
 * Nuget version: https://www.nuget.org/packages/OpenSesameCompiler
-* asmdefScriptingDefines(@pCYSl5EDgo) : https://github.com/pCYSl5EDgo/asmdefScriptingDefines
-* Csc-Manager(@pCYSl5EDgo) : https://github.com/pCYSl5EDgo/Csc-Manager
+* asmdefScriptingDefines([@pCYSl5EDgo](https://github.com/pCYSl5EDgo)) : https://github.com/pCYSl5EDgo/asmdefScriptingDefines
+* Csc-Manager([@pCYSl5EDgo](https://github.com/pCYSl5EDgo)) : https://github.com/pCYSl5EDgo/Csc-Manager
 
 
 ## Special Thanks
 
-* Special thanks to @pCYSl5EDgo, your ideas contributed to improve this package.
+* Special thanks to [@pCYSl5EDgo](https://github.com/pCYSl5EDgo), your ideas contributed to improve this package.
