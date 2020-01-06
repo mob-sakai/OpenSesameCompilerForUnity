@@ -17,6 +17,7 @@ namespace Coffee.OpenSesameCompilers
         }
 
         public bool OpenSesame = false;
+        public string ModifySymbols = "";
 
         public static OpenSesameSetting GetAtPathOrDefault(string path)
         {
@@ -60,16 +61,24 @@ namespace Coffee.OpenSesameCompilers
     [InitializeOnLoad]
     static class OpenSesameInspectorGUI
     {
+        const string k_ShowSymbolsKey = "OpenSesame_ShowSymbols";
+
         static GUIContent s_OpenSesameText;
+        static GUIContent s_ModifySymbolsText;
         static GUIContent s_PublishText;
+        static GUIContent s_ShowSymbolsText;
         static GUIContent s_HelpText;
+        static bool s_ShowSymbols;
 
         static OpenSesameInspectorGUI()
         {
             s_OpenSesameText = new GUIContent("Open Sesame", "Use OpenSesameCompiler instead of default csc. In other words, allow access to internals/privates to other assemblies.");
+            s_ModifySymbolsText = new GUIContent("Modify Symbols", "When compiling this assembly, add/remove semicolon separated symbols. Symbols starting with '!' will be removed.");
             s_PublishText = new GUIContent("Publish", "Publish this assembly as dll to the parent directory.");
+            s_ShowSymbolsText = new GUIContent("Symbols", "Show/hide the scripting define symbols to modify for this assembly.");
             s_HelpText = new GUIContent("Help", "Open help page on browser.");
             Editor.finishedDefaultHeaderGUI += OnPostHeaderGUI;
+            s_ShowSymbols = EditorPrefs.GetBool(k_ShowSymbolsKey, false);
         }
 
         static void OnPostHeaderGUI(Editor editor)
@@ -102,6 +111,13 @@ namespace Coffee.OpenSesameCompilers
                 }
 
                 GUILayout.FlexibleSpace();
+
+                if (GUILayout.Toggle(s_ShowSymbols, s_ShowSymbolsText, EditorStyles.miniButtonLeft) != s_ShowSymbols)
+                {
+                    s_ShowSymbols = !s_ShowSymbols;
+                    EditorPrefs.SetBool(k_ShowSymbolsKey, s_ShowSymbols);
+                }
+
                 if (GUILayout.Button(s_PublishText, EditorStyles.miniButtonMid))
                 {
                     OpenSesameSetting.PublishOrigin = Path.GetDirectoryName(importer.assetPath) + "/";
@@ -112,6 +128,17 @@ namespace Coffee.OpenSesameCompilers
                 {
                     Application.OpenURL("https://github.com/mob-sakai/OpenSesameCompilerForUnity");
                 }
+            }
+
+            if (!s_ShowSymbols)
+                return;
+
+            EditorGUI.BeginChangeCheck();
+            setting.ModifySymbols = EditorGUILayout.DelayedTextField(s_ModifySymbolsText, setting.ModifySymbols);
+            if (EditorGUI.EndChangeCheck())
+            {
+                importer.userData = JsonUtility.ToJson(setting);
+                importer.SaveAndReimport();
             }
         }
     }

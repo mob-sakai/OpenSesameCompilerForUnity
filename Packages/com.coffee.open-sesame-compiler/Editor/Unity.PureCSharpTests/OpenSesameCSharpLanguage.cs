@@ -43,6 +43,26 @@ namespace Coffee.OpenSesameCompilers
                 .FirstOrDefault()
             );
 
+            // Modify define symbols.
+            if(!string.IsNullOrEmpty(setting.ModifySymbols))
+            {
+                var symbols = setting.ModifySymbols.Split(';');
+                var toAdd = symbols.Where(x => 0 < x.Length && !x.StartsWith("!"));
+                var toRemove = symbols.Where(x => 1 < x.Length && x.StartsWith("!")).Select(x=>x.Substring(1));
+
+                scriptAssembly.Defines = scriptAssembly.Defines
+                    .Union(toAdd)
+                    .Except(toRemove)
+                    .Distinct()
+                    .ToArray();
+
+#if !UNITY_2019_3_OR_NEWER
+                ValueType v = island;
+                typeof(MonoIsland)
+                    .GetField("_defines", BindingFlags.Instance | BindingFlags.Public)
+                    .SetValue(v, scriptAssembly.Defines);
+                island = (MonoIsland)v;
+#endif
             }
 
             // OpenSesame is disable: Use default compiler.
