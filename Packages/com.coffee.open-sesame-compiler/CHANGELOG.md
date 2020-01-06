@@ -1,3 +1,10 @@
+# [1.0.0-preview.6](https://github.com/mob-sakai/OpenSesameCompilerForUnity/compare/v1.0.0-preview.5...v1.0.0-preview.6) (2020-01-06)
+
+
+### Bug Fixes
+
+* remove extra logging ([7093851](https://github.com/mob-sakai/OpenSesameCompilerForUnity/commit/709385132cef6d543a9843fa5f0112d8b8c76c69))
+
 # [1.0.0-preview.5](https://github.com/mob-sakai/OpenSesameCompilerForUnity/compare/v1.0.0-preview.4...v1.0.0-preview.5) (2020-01-06)
 
 
