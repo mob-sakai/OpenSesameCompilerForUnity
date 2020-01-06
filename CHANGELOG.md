@@ -1,3 +1,10 @@
+# [1.0.0-preview.7](https://github.com/mob-sakai/OpenSesameCompilerForUnity/compare/v1.0.0-preview.6...v1.0.0-preview.7) (2020-01-06)
+
+
+### Bug Fixes
+
+* update dll ([08f9e8e](https://github.com/mob-sakai/OpenSesameCompilerForUnity/commit/08f9e8ed7a2caec065794c9c0aaff2a04f69d0fa))
+
 # [1.0.0-preview.6](https://github.com/mob-sakai/OpenSesameCompilerForUnity/compare/v1.0.0-preview.5...v1.0.0-preview.6) (2020-01-06)
 
 
