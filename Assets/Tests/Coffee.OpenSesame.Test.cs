@@ -6,6 +6,29 @@ using UnityEngine.TestTools;
 
 namespace Coffee.OpenSesame
 {
+    class OpenSesameTest
+    {
+        [Test]
+        public void DefineSymbols()
+        {
+            const string log = "OSC_TEST is defined.";
+            LogAssert.Expect(LogType.Log, log);
+#if OSC_TEST
+            Debug.Log(log);
+#endif
+        }
+
+        [Test]
+        public void RemoveSymbols()
+        {
+            const string log = "TRACE is not defined.";
+            LogAssert.Expect(LogType.Log, log);
+#if !TRACE
+            Debug.Log(log);
+#endif
+        }
+    }
+
     class UnityEditorTest
     {
         [MenuItem("Assets/OpenSesame Compiler/Develop Mode", false)]
@@ -25,7 +48,7 @@ namespace Coffee.OpenSesame
             yield return null;
 
             float startTime = Time.realtimeSinceStartup;
-            while ((Time.realtimeSinceStartup - startTime) < 1f)
+            while ((Time.realtimeSinceStartup - startTime) < 1.1f)
             {
                 yield return null;
             }
