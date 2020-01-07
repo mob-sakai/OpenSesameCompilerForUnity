@@ -120,7 +120,7 @@ namespace Coffee.OpenSesameCompilers
 
                 if (GUILayout.Button(s_PublishText, EditorStyles.miniButtonMid))
                 {
-                    OpenSesameSetting.PublishOrigin = Path.GetDirectoryName(importer.assetPath) + "/";
+                    OpenSesameSetting.PublishOrigin = Path.GetDirectoryName(importer.assetPath).Replace('\\', '/') + "/";
                     importer.SaveAndReimport();
                 }
 
