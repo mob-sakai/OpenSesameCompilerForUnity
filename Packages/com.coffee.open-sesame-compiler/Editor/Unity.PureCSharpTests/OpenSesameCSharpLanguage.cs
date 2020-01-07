@@ -31,9 +31,9 @@ namespace Coffee.OpenSesameCompilers
             var path = OpenSesameSetting.PublishOrigin;
             if (path == scriptAssembly.OriginPath)
             {
-                OpenSesameSetting.PublishOrigin = null;
-                scriptAssembly.OutputDirectory = Path.GetDirectoryName(scriptAssembly.OriginPath.TrimEnd('/'));
-                UnityEngine.Debug.LogFormat("<b>Publish assembly as dll:</b> {0}", scriptAssembly.FullPath);
+                OpenSesameSetting.PublishAssemblyName = scriptAssembly.Filename;
+				//scriptAssembly.OutputDirectory = Path.GetDirectoryName(scriptAssembly.OriginPath.TrimEnd('/'));
+				UnityEngine.Debug.LogFormat("<b>Publish assembly as dll:</b> {0}", scriptAssembly.FullPath);
             }
 
             // Get OpenSesameSetting from asmdef meta.

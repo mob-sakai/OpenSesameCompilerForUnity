@@ -9,14 +9,21 @@ namespace Coffee.OpenSesameCompilers
     public class OpenSesameSetting
     {
         const string k_KeyPublishOrigin = "OpenSesame_PublishOrigin";
+        const string k_KeyPublishAssemblyName = "OpenSesame_PublishAssemblyName";
 
-        public static string PublishOrigin
+		public static string PublishOrigin
         {
             get { return EditorPrefs.GetString(k_KeyPublishOrigin, "") ?? ""; }
             set { EditorPrefs.SetString(k_KeyPublishOrigin, value); }
         }
 
-        public bool OpenSesame = false;
+		public static string PublishAssemblyName
+		{
+			get { return EditorPrefs.GetString(k_KeyPublishAssemblyName, "") ?? ""; }
+			set { EditorPrefs.SetString(k_KeyPublishAssemblyName, value); }
+		}
+
+		public bool OpenSesame = false;
         public string ModifySymbols = "";
 
         public static OpenSesameSetting GetAtPathOrDefault(string path)
