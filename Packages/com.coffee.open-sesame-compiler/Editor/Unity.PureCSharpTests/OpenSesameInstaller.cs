@@ -18,15 +18,13 @@ namespace Coffee.OpenSesameCompilers
         const string version = "3.4.0-beta.2";
         const string package = "OpenSesameCompiler";
         const string packageId = package + "." + version;
-        const string url = "https://www.nuget.org/api/v2/package/" + package + "/" + version;
+        static readonly string url = "https://globalcdn.nuget.org/packages/" + packageId.ToLower() + ".nupkg";
         static readonly string downloadPath = ("Temp/" + packageId + ".zip").Replace('/', Path.DirectorySeparatorChar);
         static readonly string extractPath = ("Library/" + packageId).Replace('/', Path.DirectorySeparatorChar);
         static readonly string csc = (extractPath + "/tools/csc.exe").Replace('/', Path.DirectorySeparatorChar);
 
         static OpenSesameInstaller()
         {
-            Install();
-
             var customLanguage = new OpenSesameCSharpLanguage();
 
             // Remove old custom compilers.
@@ -62,17 +60,27 @@ namespace Coffee.OpenSesameCompilers
 
             try
             {
+                if (File.Exists(downloadPath))
+                    File.Delete(downloadPath);
+
                 // Download csc from nuget.
                 Debug.LogFormat("<b>[OpenSesame]</b><color=magenta>[Installer]</color> Download {0} from nuget: {1}", packageId, url);
                 EditorUtility.DisplayProgressBar("Open Sesame Installer", string.Format("Download {0} from nuget", packageId), 0.5f);
-                using (var client = new WebClient())
+                try
                 {
-                    if (File.Exists(downloadPath))
-                        File.Delete(downloadPath);
-#if !UNITY_2019_3_OR_NEWER
-					ServicePointManager.ServerCertificateValidationCallback += OnServerCertificateValidation;
-#endif
-                    client.DownloadFile(url, downloadPath);
+                    using (var client = new WebClient())
+                    {
+                        client.DownloadFile(url, downloadPath);
+                    }
+                }
+                catch
+                {
+                    Debug.LogFormat("<b>[OpenSesame]</b><color=magenta>[Installer]</color> Download {0} with server certificate validation", packageId);
+                    using (var client = new WebClient())
+                    {
+                        ServicePointManager.ServerCertificateValidationCallback += OnServerCertificateValidation;
+                        client.DownloadFile(url, downloadPath);
+                    }
                 }
 
                 // Extract zip.
