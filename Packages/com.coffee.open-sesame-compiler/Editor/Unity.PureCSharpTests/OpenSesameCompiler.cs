@@ -24,12 +24,20 @@ namespace Coffee.OpenSesameCompilers
         }
 #endif
 
+#if UNITY_2020_1_OR_NEWER
+        public override void BeginCompiling()
+#else
         protected override Program StartCompiler()
+#endif
         {
             // Install modified compiler. 
             string installedCsc = OpenSesameInstaller.Install();
 
-            var p = base.StartCompiler();
+#if UNITY_2020_1_OR_NEWER
+            base.BeginCompiling();
+#else
+            Program p = base.StartCompiler();
+#endif
             if (string.IsNullOrEmpty(installedCsc))
             {
                 UnityEngine.Debug.LogWarning("<b>[OpenSesame]</b><color=orange>[Compiler]</color> OpenSesameCompiler is not installed. Instead, the default compiler will be used.");
@@ -55,7 +63,12 @@ namespace Coffee.OpenSesameCompilers
 
             var program = new Program(psi);
             program.Start();
+
+#if UNITY_2020_1_OR_NEWER
+            process = program;
+#else
             return program;
+#endif
         }
     }
 }
