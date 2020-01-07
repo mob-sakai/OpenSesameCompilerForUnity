@@ -13,7 +13,7 @@ namespace Coffee.OpenSesameCompilers
     {
 #if UNITY_2019_3_OR_NEWER
         string[] references { get { return scriptAssembly.References; } }
-		public OpenSesameCompiler(ScriptAssembly scriptAssembly, EditorScriptCompilationOptions options, string tempOutputDirectory) : base(scriptAssembly, options, tempOutputDirectory)
+        public OpenSesameCompiler(ScriptAssembly scriptAssembly, EditorScriptCompilationOptions options, string tempOutputDirectory) : base(scriptAssembly, options, tempOutputDirectory)
         {
         }
 #else
