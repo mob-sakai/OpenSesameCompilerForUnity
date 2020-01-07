@@ -4,6 +4,7 @@ using UnityEditor;
 using System.Text.RegularExpressions;
 using UnityEditor.Scripting;
 using UnityEditor.Scripting.Compilers;
+using UnityEditor.Scripting.ScriptCompilation;
 using UnityEditor.Utils;
 using UnityEngine;
 
@@ -12,7 +13,7 @@ namespace Coffee.OpenSesameCompilers
     internal class OpenSesameCompiler : MicrosoftCSharpCompiler
     {
 #if UNITY_2019_3_OR_NEWER
-        string[] references { get { return scriptAssembly.References; } }
+        string[] references { get { return assembly.References; } }
         public OpenSesameCompiler(ScriptAssembly scriptAssembly, EditorScriptCompilationOptions options, string tempOutputDirectory) : base(scriptAssembly, options, tempOutputDirectory)
         {
         }

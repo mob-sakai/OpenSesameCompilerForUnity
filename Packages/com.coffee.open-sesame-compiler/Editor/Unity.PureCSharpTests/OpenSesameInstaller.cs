@@ -69,8 +69,9 @@ namespace Coffee.OpenSesameCompilers
                 {
                     if (File.Exists(downloadPath))
                         File.Delete(downloadPath);
-
-                    ServicePointManager.ServerCertificateValidationCallback += OnServerCertificateValidation;
+#if !UNITY_2019_3_OR_NEWER
+					ServicePointManager.ServerCertificateValidationCallback += OnServerCertificateValidation;
+#endif
                     client.DownloadFile(url, downloadPath);
                 }
 
