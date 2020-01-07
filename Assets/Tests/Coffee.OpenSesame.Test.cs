@@ -1,4 +1,5 @@
 ﻿using System.Collections;
+using System.Collections.Generic;
 using NUnit.Framework;
 using UnityEditor;
 using UnityEngine;
@@ -94,6 +95,15 @@ namespace Coffee.OpenSesame
         public void PrivateConstant()
         {
             Assert.AreEqual(EditorGUIUtility.EditorLockTracker.k_LockMenuText, "Lock");
+        }
+
+        [Test]
+        public void GenericAdd()
+        {
+            var list = new List<EditorGUIUtility.EditorLockTracker>();
+            list.Add(new EditorGUIUtility.EditorLockTracker());
+
+            Assert.AreEqual(list.Count, 1);
         }
     }
 }
