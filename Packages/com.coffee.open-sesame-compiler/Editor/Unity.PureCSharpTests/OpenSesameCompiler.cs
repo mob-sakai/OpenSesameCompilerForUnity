@@ -50,13 +50,13 @@ namespace Coffee.OpenSesameCompilers
             var psi = p.GetProcessStartInfo();
             if (Application.platform == RuntimePlatform.WindowsEditor)
             {
-                psi.FileName = installedCsc.Replace('/', '\\');
+                psi.FileName = Path.GetFullPath(installedCsc);
                 psi.Arguments = psi.Arguments.Replace("@Temp/", "@Temp\\");
             }
             else
             {
                 psi.FileName = Paths.Combine(EditorApplication.applicationContentsPath, "MonoBleedingEdge", "bin", "mono").Replace('\\', '/');
-                psi.Arguments = installedCsc.Replace('\\', '/') + " " + psi.Arguments.Replace("/shared ", "");
+                psi.Arguments = installedCsc + " " + psi.Arguments.Replace("/shared ", "");
             }
 
             Debug.LogFormat("<b>[OpenSesame]</b><color=orange>[Compiler]</color> {0} {1}", psi.FileName, psi.Arguments);
