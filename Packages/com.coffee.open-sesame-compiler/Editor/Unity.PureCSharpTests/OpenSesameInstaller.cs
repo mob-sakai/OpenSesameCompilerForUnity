@@ -7,6 +7,8 @@ using UnityEditor;
 using UnityEditor.Scripting;
 using UnityEditor.Scripting.Compilers;
 using UnityEditor.Scripting.ScriptCompilation;
+using System.Net.Security;
+using System.Security.Cryptography.X509Certificates;
 
 namespace Coffee.OpenSesameCompilers
 {
@@ -68,6 +70,7 @@ namespace Coffee.OpenSesameCompilers
                     if (File.Exists(downloadPath))
                         File.Delete(downloadPath);
 
+                    ServicePointManager.ServerCertificateValidationCallback += OnServerCertificateValidation;
                     client.DownloadFile(url, downloadPath);
                 }
 
@@ -97,9 +100,16 @@ namespace Coffee.OpenSesameCompilers
             {
                 EditorUtility.ClearProgressBar();
 
+                ServicePointManager.ServerCertificateValidationCallback -= OnServerCertificateValidation;
+
                 if (File.Exists(downloadPath))
                     File.Delete(downloadPath);
             }
+        }
+
+        private static bool OnServerCertificateValidation(Object _, X509Certificate __, X509Chain ___, SslPolicyErrors ____)
+        {
+            return true;
         }
     }
 }
