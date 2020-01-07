@@ -19,9 +19,9 @@ namespace Coffee.OpenSesameCompilers
         const string package = "OpenSesameCompiler";
         const string packageId = package + "." + version;
         const string url = "https://www.nuget.org/api/v2/package/" + package + "/" + version;
-        const string downloadPath = "Temp/" + packageId + ".zip";
-        const string extractPath = "Library/" + packageId;
-        const string csc = extractPath + "/tools/csc.exe";
+        static readonly string downloadPath = ("Temp/" + packageId + ".zip").Replace('/', Path.DirectorySeparatorChar);
+        static readonly string extractPath = ("Library/" + packageId).Replace('/', Path.DirectorySeparatorChar);
+        static readonly string csc = (extractPath + "/tools/csc.exe").Replace('/', Path.DirectorySeparatorChar);
 
         static OpenSesameInstaller()
         {

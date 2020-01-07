@@ -42,6 +42,7 @@ namespace Coffee.OpenSesameCompilers
             if (Application.platform == RuntimePlatform.WindowsEditor)
             {
                 psi.FileName = installedCsc.Replace('/', '\\');
+                psi.Arguments = psi.Arguments.Replace("@Temp/", "@Temp\\");
             }
             else
             {
