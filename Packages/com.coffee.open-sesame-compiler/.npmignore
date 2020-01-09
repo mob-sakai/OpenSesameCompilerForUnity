@@ -2,8 +2,8 @@
 .vs/
 .vscode/
 *.sln
-Editor/Unity.PureCSharpTests/
-Editor/Unity.PureCSharpTests.meta
+Coffee.PreCompiler/
+Coffee.PreCompiler.meta
 
 obj/
 bin/

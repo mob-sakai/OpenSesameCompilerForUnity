@@ -1,5 +1,5 @@
 {
-    "name": "Unity.PureCSharpTests",
+    "name": "Coffee.OpenSesame.PreCompiler",
     "references": [],
     "optionalUnityReferences": [],
     "includePlatforms": [
@@ -10,5 +10,7 @@
     "overrideReferences": false,
     "precompiledReferences": [],
     "autoReferenced": false,
-    "defineConstraints": []
+    "defineConstraints": [
+        "OPEN_SESAME_DEV"
+    ]
 }
