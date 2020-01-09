@@ -1,3 +1,22 @@
+# [1.0.0-preview.10](https://github.com/mob-sakai/OpenSesameCompilerForUnity/compare/v1.0.0-preview.9...v1.0.0-preview.10) (2020-01-09)
+
+
+### Bug Fixes
+
+* cannot publish on 2019.3 ([29f1974](https://github.com/mob-sakai/OpenSesameCompilerForUnity/commit/29f1974be0991aea6999733430d43ed4e52844de))
+* cannot publish on windows ([bfb6801](https://github.com/mob-sakai/OpenSesameCompilerForUnity/commit/bfb680185b4702561c9778f12b7e28c8a453606d))
+* fail to download compiler from nuget ([f579a05](https://github.com/mob-sakai/OpenSesameCompilerForUnity/commit/f579a05cecf33dcc34c8ab9ebd67b9c5b223bfe8))
+* not found filename ([a4cf2a5](https://github.com/mob-sakai/OpenSesameCompilerForUnity/commit/a4cf2a5dbdb22390c2e5f3757e335d2f659297ac))
+* TlsException: Invalid certificate received from server. ([48dbff0](https://github.com/mob-sakai/OpenSesameCompilerForUnity/commit/48dbff02899e2a319b9fa6a439e5e39731c4e346)), closes [#13](https://github.com/mob-sakai/OpenSesameCompilerForUnity/issues/13)
+
+
+### Features
+
+* add pre-compiler to init ([062892d](https://github.com/mob-sakai/OpenSesameCompilerForUnity/commit/062892dc60b4f8ba3afc33f5099f99cc41a22be5))
+* support 2019.3 ([134f304](https://github.com/mob-sakai/OpenSesameCompilerForUnity/commit/134f3043f854111d9f8bed822b49a4dc4db5d690))
+* support 2020.1 ([d2589b3](https://github.com/mob-sakai/OpenSesameCompilerForUnity/commit/d2589b379e253fb0fbcbdc656706bb579cf66a12))
+* support Windows ([de3bccb](https://github.com/mob-sakai/OpenSesameCompilerForUnity/commit/de3bccb603ff4d5781610671463cc26bd028dd4b)), closes [#8](https://github.com/mob-sakai/OpenSesameCompilerForUnity/issues/8)
+
 # [1.0.0-preview.9](https://github.com/mob-sakai/OpenSesameCompilerForUnity/compare/v1.0.0-preview.8...v1.0.0-preview.9) (2020-01-06)
 
 
