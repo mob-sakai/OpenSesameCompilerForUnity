@@ -7,6 +7,7 @@ In other words, you can access to **any internals/privates** in other assemblies
 Let's say, **"Open sesame!"**
 
 ![](https://user-images.githubusercontent.com/12690315/71837979-255d0880-30fb-11ea-99bc-3bb96b77cfa6.gif)
+
 ![](https://user-images.githubusercontent.com/12690315/70616819-a804bc00-1c52-11ea-8ea3-e24f94f6467d.gif)
 
 [![](https://img.shields.io/github/release/mob-sakai/OpenSesameCompilerForUnity.svg?label=latest%20version)](https://github.com/mob-sakai/OpenSesameCompilerForUnity/releases)
@@ -90,7 +91,7 @@ Or, use [UpmGitExtension](https://github.com/mob-sakai/UpmGitExtension).
 ### Compile AssemblyDefinitionFile to an 'internal accessible' dll
 
 1. Select a `AssemblyDefinitionFile` in project view
-2. Configure setting for the assembly in inspector view:
+2. Configure setting for the assembly in inspector view:  
 ![](https://user-images.githubusercontent.com/12690315/71836600-ad411380-30f7-11ea-8295-45fac816437a.png)
    * **Open Sesame**: Use OpenSesameCompiler instead of default csc to compile this assembly. In other words, allow this assembly to access to internals/privates to other assemblies without reflection.
    * **Symbols**: how/hide the scripting define symbols to modify for this assembly.
@@ -117,7 +118,7 @@ The demo project access to internals/privates:
 // EditorApplication.CallDelayed is an internal-static method in UnityEditor assembly.
 EditorApplication.CallDelayed(() => Debug.Log("delayed"), 1);
 ```
-4. Select a `Assets/Tests/Coffee.OpenSesame.Test.asmdef` in project view and activate 'Open Sesame' in inspector view  
+4. Select `Assets/Tests/Coffee.OpenSesame.Test.asmdef` in project view and activate 'Open Sesame' in inspector view  
 ![](https://user-images.githubusercontent.com/12690315/71837979-255d0880-30fb-11ea-99bc-3bb96b77cfa6.gif)
 5. Run all edit mode tests in test runner view (`Windows > General > Test Runner`).  
 The compilation error is gone, but some tests do not pass.  
