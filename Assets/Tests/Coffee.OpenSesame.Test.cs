@@ -44,15 +44,6 @@ namespace Coffee.OpenSesame
 
     class UnityEditorTest
     {
-        [MenuItem("Assets/OpenSesame Compiler/Develop Mode", false)]
-        static void SwitchSymbol()
-        {
-            var group = EditorUserBuildSettings.selectedBuildTargetGroup;
-            var symbols = PlayerSettings.GetScriptingDefineSymbolsForGroup(group);
-
-            PlayerSettings.SetScriptingDefineSymbolsForGroup(group, string.IsNullOrEmpty("OPEN_SESAME_LOG") ? "OPEN_SESAME_LOG;OPEN_SESAME_DEV" : "OPEN_SESAME_LOG");
-        }
-
         [UnityTest]
         public IEnumerator InternalMethod()
         {
