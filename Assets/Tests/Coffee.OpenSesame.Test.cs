@@ -30,6 +30,18 @@ namespace Coffee.OpenSesame
         }
     }
 
+    class RuntimeTest
+    {
+        [Test]
+        public void ListPool()
+        {
+            List<int> list = UnityEngine.UI.ListPool<int>.Get();
+            list.Add(1);
+            list.Clear();
+            UnityEngine.UI.ListPool<int>.Release(list);
+        }
+    }
+
     class UnityEditorTest
     {
         [MenuItem("Assets/OpenSesame Compiler/Develop Mode", false)]
