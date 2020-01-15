@@ -22,6 +22,11 @@ namespace Coffee.OpenSesameCompilers
         static readonly string downloadPath = ("Temp/" + packageId + ".zip").Replace('/', Path.DirectorySeparatorChar);
         static readonly string extractPath = ("Library/" + packageId).Replace('/', Path.DirectorySeparatorChar);
         static readonly string csc = (extractPath + "/tools/csc.exe").Replace('/', Path.DirectorySeparatorChar);
+#if UNITY_EDITOR_WIN
+        static readonly string exe7z = EditorApplication.applicationContentsPath + "\\Tools\\7z.exe";
+#else
+        static readonly string exe7z = EditorApplication.applicationContentsPath + "/Tools/7za";
+#endif
 
         static OpenSesameInstaller()
         {
@@ -64,6 +69,9 @@ namespace Coffee.OpenSesameCompilers
                 if (File.Exists(downloadPath))
                     File.Delete(downloadPath);
 
+                if (Directory.Exists(extractPath))
+                    Directory.Delete(extractPath, true);
+
                 // Download csc from nuget.
                 Debug.LogFormat("<b>[OpenSesame]</b><color=magenta>[Installer]</color> Download {0} from nuget: {1}", packageId, url);
                 EditorUtility.DisplayProgressBar("Open Sesame Installer", string.Format("Download {0} from nuget", packageId), 0.5f);
@@ -87,13 +95,7 @@ namespace Coffee.OpenSesameCompilers
                 // Extract zip.
                 Debug.LogFormat("<b>[OpenSesame]</b><color=magenta>[Installer]</color> Extract {0} to {1}", downloadPath, extractPath);
                 EditorUtility.DisplayProgressBar("Open Sesame Installer", string.Format("Extract {0}", downloadPath), 0.8f);
-                using (var unzip = new Unzip(downloadPath))
-                {
-                    if (Directory.Exists(extractPath))
-                        Directory.Delete(extractPath, true);
-
-                    unzip.ExtractToDirectory(extractPath);
-                }
+                Process.Start(exe7z, string.Format("x {0} -o{1}", downloadPath, extractPath)).WaitForExit();
 
                 return csc;
             }
