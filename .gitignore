@@ -22,3 +22,4 @@ obj/
 bin/
 
 compile.log
+node_modules

@@ -1,0 +1,39 @@
+{
+  "name": "release-to-upm",
+  "description": "To release upm package: npm ci && npx semantic-release",
+  "version": "1.0.0",
+  "devDependencies": {
+    "git-snapshot": "^2.2.0",
+    "@semantic-release/changelog": "^4.0.0",
+    "@semantic-release/git": "^8.0.0",
+    "@semantic-release/exec": "^4.0.0",
+    "semantic-release": "^16.0.0"
+  },
+  "pkg": "Packages/com.coffee.open-sesame-compiler",
+  "scripts": {
+    "release": "npm ci && cd $npm_package_pkg && npx semantic-release --no-ci"
+  },
+  "release": {
+    "branches": [ "master", { "name": "preview", "prerelease": true } ],
+    "plugins": [
+      "@semantic-release/commit-analyzer",
+      "@semantic-release/release-notes-generator",
+      "@semantic-release/changelog",
+      "@semantic-release/git",
+      [
+        "@semantic-release/npm",
+        {
+          "npmPublish": false,
+          "tarballDir": "."
+        }
+      ],
+      [
+        "@semantic-release/exec",
+        {
+          "prepareCmd": "tar -xzvf *.tgz",
+          "publishCmd": "git snapshot -p package -b upm -r ${options.repositoryUrl} -t ${nextRelease.version} -m \"${nextRelease.notes}\""
+        }
+      ]
+    ]
+  }
+}
