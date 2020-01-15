@@ -16,7 +16,7 @@ namespace Coffee.OpenSesameCompilers
         {
             var asmdefPath = CompilationPipeline.GetAssemblyDefinitionFilePathFromAssemblyName(Path.GetFileName(path).Replace(".csproj", ""));
             var setting = OpenSesameSetting.GetAtPathOrDefault(asmdefPath);
-            if (setting == null || string.IsNullOrEmpty(setting.ModifySymbols))
+            if (string.IsNullOrEmpty(setting.ModifySymbols) && !setting.OpenSesame)
                 return content;
 
             var symbols = setting.ModifySymbols.Split(';');
@@ -25,6 +25,7 @@ namespace Coffee.OpenSesameCompilers
             var modified = s_DefineConstants.Match(content).Groups[1].Value.Split(';')
                 .Union(toAdd)
                 .Except(toRemove)
+                .Union(setting.OpenSesame ? new[] { "OPEN_SESAME" } : Enumerable.Empty<string>())
                 .Distinct()
                 .ToArray();
 

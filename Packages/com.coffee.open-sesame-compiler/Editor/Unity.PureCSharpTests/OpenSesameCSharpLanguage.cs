@@ -44,7 +44,7 @@ namespace Coffee.OpenSesameCompilers
             );
 
             // Modify define symbols.
-            if(!string.IsNullOrEmpty(setting.ModifySymbols))
+            if(!string.IsNullOrEmpty(setting.ModifySymbols) && !setting.OpenSesame)
             {
                 var symbols = setting.ModifySymbols.Split(';');
                 var toAdd = symbols.Where(x => 0 < x.Length && !x.StartsWith("!"));
@@ -53,6 +53,7 @@ namespace Coffee.OpenSesameCompilers
                 scriptAssembly.Defines = scriptAssembly.Defines
                     .Union(toAdd)
                     .Except(toRemove)
+                    .Union(setting.OpenSesame ? new[] { "OPEN_SESAME" } : Enumerable.Empty<string>())
                     .Distinct()
                     .ToArray();
 
