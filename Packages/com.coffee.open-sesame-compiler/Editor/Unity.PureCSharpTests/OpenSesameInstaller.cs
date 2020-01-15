@@ -9,6 +9,7 @@ using UnityEditor.Scripting.Compilers;
 using UnityEditor.Scripting.ScriptCompilation;
 using System.Net.Security;
 using System.Security.Cryptography.X509Certificates;
+using System.Diagnostics;
 
 namespace Coffee.OpenSesameCompilers
 {
@@ -30,8 +31,8 @@ namespace Coffee.OpenSesameCompilers
 
         static OpenSesameInstaller()
         {
-				//
-				var customLanguage = new OpenSesameCSharpLanguage();
+            // 
+            var customLanguage = new OpenSesameCSharpLanguage();
 
             // Remove old custom compilers.
             int removed = ScriptCompilers.SupportedLanguages.RemoveAll(x => typeof(CSharpLanguage).IsAssignableFrom(x.GetType()));
@@ -75,21 +76,10 @@ namespace Coffee.OpenSesameCompilers
                 // Download csc from nuget.
                 Debug.LogFormat("<b>[OpenSesame]</b><color=magenta>[Installer]</color> Download {0} from nuget: {1}", packageId, url);
                 EditorUtility.DisplayProgressBar("Open Sesame Installer", string.Format("Download {0} from nuget", packageId), 0.5f);
-                try
+                using (var client = new WebClient())
                 {
-                    using (var client = new WebClient())
-                    {
-                        client.DownloadFile(url, downloadPath);
-                    }
-                }
-                catch
-                {
-                    Debug.LogFormat("<b>[OpenSesame]</b><color=magenta>[Installer]</color> Download {0} with server certificate validation", packageId);
-                    using (var client = new WebClient())
-                    {
-                        ServicePointManager.ServerCertificateValidationCallback += OnServerCertificateValidation;
-                        client.DownloadFile(url, downloadPath);
-                    }
+                    ServicePointManager.ServerCertificateValidationCallback += OnServerCertificateValidation;
+                    client.DownloadFile(url, downloadPath);
                 }
 
                 // Extract zip.
@@ -119,7 +109,7 @@ namespace Coffee.OpenSesameCompilers
             }
         }
 
-        private static bool OnServerCertificateValidation(Object _, X509Certificate __, X509Chain ___, SslPolicyErrors ____)
+        private static bool OnServerCertificateValidation(object _, X509Certificate __, X509Chain ___, SslPolicyErrors ____)
         {
             return true;
         }
