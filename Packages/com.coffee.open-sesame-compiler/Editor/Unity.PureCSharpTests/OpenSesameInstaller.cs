@@ -16,13 +16,23 @@ namespace Coffee.OpenSesameCompilers
     [InitializeOnLoad]
     internal class OpenSesameInstaller
     {
-        const string version = "3.4.0-beta.3";
-        const string package = "OpenSesameCompiler";
-        const string packageId = package + "." + version;
-        static readonly string url = "https://globalcdn.nuget.org/packages/" + packageId.ToLower() + ".nupkg";
-        static readonly string downloadPath = ("Temp/" + packageId + ".zip").Replace('/', Path.DirectorySeparatorChar);
-        static readonly string extractPath = ("Library/" + packageId).Replace('/', Path.DirectorySeparatorChar);
-        static readonly string csc = (extractPath + "/tools/csc.exe").Replace('/', Path.DirectorySeparatorChar);
+
+        const string oscVersion = "3.4.0-beta.4";
+        const string oscName = "OpenSesameCompiler";
+        const string oscPackageId = oscName + "." + oscVersion;
+        static readonly string oscDownloadUrl = "https://globalcdn.nuget.org/packages/" + oscPackageId.ToLower() + ".nupkg";
+        //static readonly string oscDownloadPath = ("Temp/" + oscPackageId.ToLower() + ".zip").Replace('/', Path.DirectorySeparatorChar);
+        static readonly string oscInstallPath = ("Library/" + oscPackageId).Replace('/', Path.DirectorySeparatorChar);
+        static readonly string csc = (oscInstallPath + "/tools/csc.exe").Replace('/', Path.DirectorySeparatorChar);
+
+
+        //const string version = "3.4.0-beta.4";
+        //const string package = "OpenSesameCompiler";
+        //const string packageId = package + "." + version;
+        //static readonly string url = "https://globalcdn.nuget.org/packages/" + packageId.ToLower() + ".nupkg";
+        //static readonly string downloadPath = ("Temp/" + packageId + ".zip").Replace('/', Path.DirectorySeparatorChar);
+        //static readonly string extractPath = ("Library/" + packageId).Replace('/', Path.DirectorySeparatorChar);
+        //static readonly string csc = (extractPath + "/tools/csc.exe").Replace('/', Path.DirectorySeparatorChar);
 #if UNITY_EDITOR_WIN
         static readonly string exe7z = EditorApplication.applicationContentsPath + "\\Tools\\7z.exe";
 #else
@@ -61,51 +71,52 @@ namespace Coffee.OpenSesameCompilers
             // Modified compiler is already installed.
             if (File.Exists(csc))
             {
-                Debug.LogFormat("<b>[OpenSesame]</b><color=magenta>[Installer]</color> {0} is already installed: {1}", packageId, csc);
+                Debug.LogFormat("<b>[OpenSesame]</b><color=magenta>[Installer]</color> {0} is already installed: {1}", oscPackageId, csc);
                 return csc;
             }
 
             try
             {
-                if (File.Exists(downloadPath))
-                    File.Delete(downloadPath);
-
-                if (Directory.Exists(extractPath))
-                    Directory.Delete(extractPath, true);
+                var oscDownloadPath = Path.GetTempFileName() + ".nuget";
+                if (Directory.Exists(oscInstallPath))
+                    Directory.Delete(oscInstallPath, true);
 
                 // Download csc from nuget.
-                Debug.LogFormat("<b>[OpenSesame]</b><color=magenta>[Installer]</color> Download {0} from nuget: {1}", packageId, url);
-                EditorUtility.DisplayProgressBar("Open Sesame Installer", string.Format("Download {0} from nuget", packageId), 0.5f);
-                using (var client = new WebClient())
+                Debug.LogFormat("<b>[OpenSesame]</b><color=magenta>[Installer]</color> Download {0} from nuget: {1}", oscPackageId, oscDownloadUrl);
+                EditorUtility.DisplayProgressBar("Open Sesame Installer", string.Format("Download {0} from nuget", oscPackageId), 0.5f);
+                try
                 {
-                    ServicePointManager.ServerCertificateValidationCallback += OnServerCertificateValidation;
-                    client.DownloadFile(url, downloadPath);
+                    using (var client = new WebClient())
+                    {
+                        client.DownloadFile(oscDownloadUrl, oscDownloadPath);
+                    }
+                }
+                catch
+                {
+                    Debug.LogFormat("<b>[OpenSesame]</b><color=magenta>[Installer]</color> Download {0} with server certificate validation", oscPackageId);
+                    using (var client = new WebClient())
+                    {
+                        ServicePointManager.ServerCertificateValidationCallback += OnServerCertificateValidation;
+                        client.DownloadFile(oscDownloadUrl, oscDownloadPath);
+                    }
                 }
 
                 // Extract zip.
-                Debug.LogFormat("<b>[OpenSesame]</b><color=magenta>[Installer]</color> Extract {0} to {1}", downloadPath, extractPath);
-                EditorUtility.DisplayProgressBar("Open Sesame Installer", string.Format("Extract {0}", downloadPath), 0.8f);
-                Process.Start(exe7z, string.Format("x {0} -o{1}", downloadPath, extractPath)).WaitForExit();
+                Debug.LogFormat("<b>[OpenSesame]</b><color=magenta>[Installer]</color> Extract {0} to {1}", oscDownloadPath, oscInstallPath);
+                EditorUtility.DisplayProgressBar("Open Sesame Installer", string.Format("Extract {0}", oscDownloadPath), 0.8f);
+                Process.Start(exe7z, string.Format("x {0} -o{1}", oscDownloadPath, oscInstallPath)).WaitForExit();
 
                 return csc;
             }
             catch (Exception e)
             {
                 UnityEngine.Debug.LogException(e);
-
-                if (Directory.Exists(extractPath))
-                    Directory.Delete(extractPath, true);
-
                 return null;
             }
             finally
             {
                 EditorUtility.ClearProgressBar();
-
                 ServicePointManager.ServerCertificateValidationCallback -= OnServerCertificateValidation;
-
-                if (File.Exists(downloadPath))
-                    File.Delete(downloadPath);
             }
         }
 
