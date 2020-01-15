@@ -26,6 +26,22 @@ namespace Coffee.OpenSesameCompilers
 		public bool OpenSesame = false;
         public string ModifySymbols = "";
 
+        [InitializeOnLoadMethod]
+        static void OnInitializeOnLoadMethod()
+        {
+            var origin = PublishOrigin;
+            var assemblyName = PublishAssemblyName;
+            PublishOrigin = null;
+            PublishAssemblyName = null;
+            if (!string.IsNullOrEmpty(origin) && !string.IsNullOrEmpty(assemblyName))
+            {
+                var src = "Library/ScriptAssemblies/" + assemblyName;
+                var dst = Path.Combine(Path.GetDirectoryName(origin.TrimEnd('/')), assemblyName);
+                UnityEngine.Debug.LogFormat("<b>[OpenSesameCompiler]</b> Publish assembly as dll: {0} -> {1}", src, dst);
+                FileUtil.UnityFileCopy(src, dst, true);
+            }
+        }
+
         public static OpenSesameSetting GetAtPathOrDefault(string path)
         {
             if (string.IsNullOrEmpty(path) || !File.Exists(Path.GetFullPath(path)))

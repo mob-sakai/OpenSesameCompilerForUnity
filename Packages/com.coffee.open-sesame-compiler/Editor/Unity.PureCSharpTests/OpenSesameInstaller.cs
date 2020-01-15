@@ -25,21 +25,6 @@ namespace Coffee.OpenSesameCompilers
 
         static OpenSesameInstaller()
         {
-			//
-
-			var PublishOrigin = OpenSesameSetting.PublishOrigin;
-			var PublishAssemblyName = OpenSesameSetting.PublishAssemblyName;
-			OpenSesameSetting.PublishOrigin = null;
-			OpenSesameSetting.PublishAssemblyName = null;
-			if(!string.IsNullOrEmpty(PublishOrigin) && !string.IsNullOrEmpty(PublishAssemblyName))
-			{
-				Debug.Log("PUBLISH");
-				Debug.Log("Library/ScriptAssemblies/" + PublishAssemblyName);
-				Debug.Log(Path.Combine(Path.GetDirectoryName(PublishOrigin.TrimEnd('/')), PublishAssemblyName));
-				FileUtil.UnityFileCopy("Library/ScriptAssemblies/" + PublishAssemblyName, Path.Combine(Path.GetDirectoryName(PublishOrigin.TrimEnd('/')), PublishAssemblyName), true);
-			}
-			
-
 				//
 				var customLanguage = new OpenSesameCSharpLanguage();
 
