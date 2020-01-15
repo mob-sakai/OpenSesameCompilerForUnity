@@ -15,7 +15,7 @@ namespace Coffee.OpenSesameCompilers
     [InitializeOnLoad]
     internal class OpenSesameInstaller
     {
-        const string version = "3.4.0-beta.2";
+        const string version = "3.4.0-beta.3";
         const string package = "OpenSesameCompiler";
         const string packageId = package + "." + version;
         static readonly string url = "https://globalcdn.nuget.org/packages/" + packageId.ToLower() + ".nupkg";
