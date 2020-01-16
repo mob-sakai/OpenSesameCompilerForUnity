@@ -23,3 +23,6 @@ bin/
 
 compile.log
 node_modules
+Packages/**/package/
+Packages/**/package.meta
+*.tgz
