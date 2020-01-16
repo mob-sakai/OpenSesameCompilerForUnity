@@ -1,3 +1,10 @@
+# [1.0.0-preview.12](https://github.com/mob-sakai/OpenSesameCompilerForUnity/compare/v1.0.0-preview.11...v1.0.0-preview.12) (2020-01-16)
+
+
+### Bug Fixes
+
+* fix .npmignore ([cdde18c](https://github.com/mob-sakai/OpenSesameCompilerForUnity/commit/cdde18cf9981ab8e55ffc9acf501b61f836bdae2))
+
 # [1.0.0-preview.11](https://github.com/mob-sakai/OpenSesameCompilerForUnity/compare/v1.0.0-preview.10...v1.0.0-preview.11) (2020-01-16)
 
 
