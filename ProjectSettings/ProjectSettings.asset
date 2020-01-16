@@ -528,7 +528,7 @@ PlayerSettings:
   webGLLinkerTarget: 1
   webGLThreadsSupport: 0
   scriptingDefineSymbols:
-    1: 
+    1: OPEN_SESAME_LOG
   platformArchitecture: {}
   scriptingBackend: {}
   il2cppCompilerConfiguration: {}

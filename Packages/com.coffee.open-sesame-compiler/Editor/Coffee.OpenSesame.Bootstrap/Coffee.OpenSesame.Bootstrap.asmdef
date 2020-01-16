@@ -1,5 +1,5 @@
 {
-    "name": "Coffee.OpenSesame.PreCompiler",
+    "name": "Coffee.OpenSesame.Bootstrap",
     "references": [],
     "optionalUnityReferences": [],
     "includePlatforms": [

@@ -3,10 +3,10 @@ using UnityEditor;
 using UnityEditorInternal;
 using UnityEngine;
 
-namespace Coffee.OpenSesameCompilers
+namespace Coffee.OpenSesame
 {
     [System.Serializable]
-    public class OpenSesameSetting
+    internal class OpenSesameSetting
     {
         const string k_KeyPublishOrigin = "OpenSesame_PublishOrigin";
         const string k_KeyPublishAssemblyName = "OpenSesame_PublishAssemblyName";
@@ -37,7 +37,7 @@ namespace Coffee.OpenSesameCompilers
             {
                 var src = "Library/ScriptAssemblies/" + assemblyName;
                 var dst = Path.Combine(Path.GetDirectoryName(origin.TrimEnd('/')), assemblyName);
-                UnityEngine.Debug.LogFormat("<b>[OpenSesameCompiler]</b> Publish assembly as dll: {0} -> {1}", src, dst);
+                UnityEngine.Debug.LogFormat("<b>[OpenSesame]</b> Publish assembly as dll: {0} -> {1}", src, dst);
                 FileUtil.UnityFileCopy(src, dst, true);
             }
         }
@@ -82,7 +82,7 @@ namespace Coffee.OpenSesameCompilers
     }
 
     [InitializeOnLoad]
-    static class OpenSesameInspectorGUI
+    static class InspectorGUI
     {
         const string k_ShowSymbolsKey = "OpenSesame_ShowSymbols";
 
@@ -93,7 +93,7 @@ namespace Coffee.OpenSesameCompilers
         static GUIContent s_HelpText;
         static bool s_ShowSymbols;
 
-        static OpenSesameInspectorGUI()
+        static InspectorGUI()
         {
             s_OpenSesameText = new GUIContent("Open Sesame", "Use OpenSesameCompiler instead of default csc. In other words, allow access to internals/privates to other assemblies.");
             s_ModifySymbolsText = new GUIContent("Modify Symbols", "When compiling this assembly, add/remove semicolon separated symbols. Symbols starting with '!' will be removed.");

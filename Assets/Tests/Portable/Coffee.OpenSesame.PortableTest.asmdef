@@ -1,8 +1,12 @@
 {
-    "name": "Coffee.OpenSesame.Portable",
+    "name": "Coffee.OpenSesame.PortableTest",
     "references": [],
-    "optionalUnityReferences": [],
-    "includePlatforms": [],
+    "optionalUnityReferences": [
+        "TestAssemblies"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
     "excludePlatforms": [],
     "allowUnsafeCode": false,
     "overrideReferences": false,
