@@ -320,13 +320,19 @@ namespace Coffee.OpenSesamePortable
             UnityEngine.Debug.LogFormat(kLogHeader + format, args);
         }
 
+        [Conditional("OPEN_SESAME_LOG")]
+        static void Warning(string format, params object[] args)
+        {
+            UnityEngine.Debug.LogWarningFormat(kLogHeader + format, args);
+        }
+
         static Bootstrap()
         {
             var assemblyName = typeof(Bootstrap).Assembly.GetName().Name;
             kLogHeader = string.Format("<b><color=#c7634c>[PortableBootstrap ({0})]</color></b> ", assemblyName);
             if (Core.IsInternalAssembly(assemblyName))
             {
-                Log("This assembly is internal in OpenSesameCompiler. Skip portable bootstrap task");
+                Warning("This assembly is internal in OpenSesameCompiler. Skip portable bootstrap task");
                 return;
             }
 
