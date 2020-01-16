@@ -69,7 +69,8 @@ namespace Coffee.OpenSesamePortable
     internal class Core
     {
         const string kLogHeader = "<b>[OpenSesame]</b><color=#9a4089>[Core]</color> ";
-        static readonly string[] kOpenSesameAssemblies = new []
+        const string kVersion = "3.4.0-beta.4";
+        static readonly string[] kOpenSesameAssemblies = new[]
         {
             "Coffee.OpenSesame",
             "Coffee.OpenSesame.OSC",
@@ -87,7 +88,7 @@ namespace Coffee.OpenSesamePortable
 
         public static string GetInstalledCompiler()
         {
-            return InstallCompiler("3.4.0-beta.4");
+            return InstallCompiler(kVersion);
         }
 
         static string InstallCompiler(string version)

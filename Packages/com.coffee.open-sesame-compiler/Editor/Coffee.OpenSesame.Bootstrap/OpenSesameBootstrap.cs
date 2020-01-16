@@ -19,16 +19,22 @@ namespace Coffee.OpenSesame
             UnityEngine.Debug.LogFormat("<color=#c34062><b>[OpenSesameBootstrap]</b></color> " + format, args);
         }
 
+        [Conditional("OPEN_SESAME_LOG")]
+        static void Warning(string format, params object[] args)
+        {
+            UnityEngine.Debug.LogWarningFormat("<color=#c34062><b>[OpenSesameBootstrap]</b></color> " + format, args);
+        }
+
         static Bootstrap()
         {
             // OpenSesameLanguageInstaller has been loaded.
             if (Type.GetType(kInstallerFullName) != null || Type.GetType(kInstallerFullName + ".OSC") != null)
             {
-                Log("OpenSesameLanguageInstaller has been loaded. Skip bootstrap task.", kInstallerFullName);
+                Warning("OpenSesameLanguageInstaller has been loaded. Skip bootstrap task.", kInstallerFullName);
                 return;
             }
 
-			Log("Start bootstrap task");
+            Log("Start bootstrap task");
             try
             {
                 // Install OpenSesame compiler to project.
