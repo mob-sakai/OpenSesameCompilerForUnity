@@ -3,10 +3,10 @@
 .vscode/
 *.sln
 
-Coffee.OpenSesame.Bootstrap/
-Coffee.OpenSesame.Bootstrap.meta
-Coffee.OpenSesame.Dev/
-Coffee.OpenSesame.Dev.meta
+Editor/Coffee.OpenSesame.Bootstrap/*
+Editor/Coffee.OpenSesame.Bootstrap.meta
+Editor/Coffee.OpenSesame.Dev/*
+Editor/Coffee.OpenSesame.Dev.meta
 
 obj/
 bin/
