@@ -1,13 +1,10 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
-using NUnit.Framework;
 using UnityEditor;
 using UnityEngine;
-using UnityEngine.UI;
-using UnityEngine.TestTools;
 using System.Linq;
 
-namespace Coffee.OpenSesame
+namespace Coffee.OpenSesame.Dev
 {
     class OpenSesameMenu
     {
