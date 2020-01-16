@@ -2,8 +2,11 @@
 .vs/
 .vscode/
 *.sln
-Coffee.PreCompiler/
-Coffee.PreCompiler.meta
+
+Coffee.OpenSesame.Bootstrap/
+Coffee.OpenSesame.Bootstrap.meta
+Coffee.OpenSesame.Dev/
+Coffee.OpenSesame.Dev.meta
 
 obj/
 bin/
