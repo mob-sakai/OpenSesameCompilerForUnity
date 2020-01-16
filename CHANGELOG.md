@@ -1,3 +1,21 @@
+# [1.0.0-preview.11](https://github.com/mob-sakai/OpenSesameCompilerForUnity/compare/v1.0.0-preview.10...v1.0.0-preview.11) (2020-01-16)
+
+
+### Bug Fixes
+
+* add development log ([bb7c365](https://github.com/mob-sakai/OpenSesameCompilerForUnity/commit/bb7c365376f37117cb26c38b0a8e432528f22583))
+* fix installer ([b707e84](https://github.com/mob-sakai/OpenSesameCompilerForUnity/commit/b707e84409a72b5985438e8892014264fe74841a))
+* fix publish command ([df7bdd1](https://github.com/mob-sakai/OpenSesameCompilerForUnity/commit/df7bdd1718f12a5ae9735c838f000ff3b1c1a67f))
+* unzip with 7z ([0db6bbd](https://github.com/mob-sakai/OpenSesameCompilerForUnity/commit/0db6bbde2828d1ac608110b78ac85ec32ad5b37d))
+
+
+### Features
+
+* add 'OPEN_SESAME' symbol automatically ([8718833](https://github.com/mob-sakai/OpenSesameCompilerForUnity/commit/8718833dedf81e4712b220b30e4be2017e38a750))
+* add develop menu ([8893a1f](https://github.com/mob-sakai/OpenSesameCompilerForUnity/commit/8893a1fa7423ec7887a51b3a0521ddd223b3c81f))
+* portable mode ([2cfd2e0](https://github.com/mob-sakai/OpenSesameCompilerForUnity/commit/2cfd2e0b376525a0fe8438b0bd022acaa3c19585))
+* update OpenSesameCompiler to 3.4.0-beta.3 ([f8d9a1b](https://github.com/mob-sakai/OpenSesameCompilerForUnity/commit/f8d9a1bc18324631c59cb5fea62d76a0c700f37c))
+
 # [1.0.0-preview.10](https://github.com/mob-sakai/OpenSesameCompilerForUnity/compare/v1.0.0-preview.9...v1.0.0-preview.10) (2020-01-09)
 
 

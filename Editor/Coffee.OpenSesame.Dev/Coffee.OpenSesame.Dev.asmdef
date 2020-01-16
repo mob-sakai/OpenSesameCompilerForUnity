@@ -1,5 +1,5 @@
 {
-    "name": "Coffee.OpenSesame.PreCompiler",
+    "name": "Coffee.OpenSesame.Dev",
     "references": [],
     "optionalUnityReferences": [],
     "includePlatforms": [
@@ -9,8 +9,6 @@
     "allowUnsafeCode": false,
     "overrideReferences": false,
     "precompiledReferences": [],
-    "autoReferenced": false,
-    "defineConstraints": [
-        "OPEN_SESAME_DEV"
-    ]
+    "autoReferenced": true,
+    "defineConstraints": []
 }
