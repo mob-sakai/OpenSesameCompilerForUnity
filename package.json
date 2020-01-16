@@ -11,10 +11,16 @@
   },
   "pkg": "Packages/com.coffee.open-sesame-compiler",
   "scripts": {
-    "release": "npm ci && cd $npm_package_pkg && npx semantic-release --no-ci"
+    "release": "cd $npm_package_pkg && npx semantic-release"
   },
   "release": {
-    "branches": [ "master", { "name": "preview", "prerelease": true } ],
+    "branches": [
+      "master",
+      {
+        "name": "preview",
+        "prerelease": true
+      }
+    ],
     "plugins": [
       "@semantic-release/commit-analyzer",
       "@semantic-release/release-notes-generator",

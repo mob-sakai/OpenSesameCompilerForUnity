@@ -12,14 +12,16 @@ jobs:
   release:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v1.0.0
+      - uses: actions/checkout@v2
 
-      - uses: actions/setup-node@v1.2.0
+      - uses: actions/cache@v1
         with:
-          node-version: 12
+          path: ~/.npm
+          key: ${{ runner.os }}-node
 
-      - name: Release
-        run: npx upm-release --pkg-root Packages/com.coffee.open-sesame-compiler --debug
+      - run: npm ci
+      
+      - run: npm run release
         env:
           NPM_TOKEN: ${{secrets.NPM_TOKEN}}
           GH_TOKEN: ${{secrets.GH_TOKEN}}
