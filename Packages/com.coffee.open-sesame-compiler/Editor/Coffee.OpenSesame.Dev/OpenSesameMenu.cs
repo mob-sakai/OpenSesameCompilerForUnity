@@ -11,6 +11,8 @@ namespace Coffee.OpenSesame.Dev
         const string kEnableLoggingText = "OpenSesame/Enable Logging";
         const string kEnableLoggingSymbol = "OPEN_SESAME_LOG";
 
+        const string kInstallDefaultCompilerText = "OpenSesame/Install Default Compiler";
+
         [MenuItem(kDevelopModeText, false)]
         static void DevelopMode()
         {
@@ -39,7 +41,7 @@ namespace Coffee.OpenSesame.Dev
 
         static string[] GetSymbols()
         {
-            return PlayerSettings.GetScriptingDefineSymbolsForGroup(EditorUserBuildSettings.selectedBuildTargetGroup).Split(';');
+            return PlayerSettings.GetScriptingDefineSymbolsForGroup(EditorUserBuildSettings.selectedBuildTargetGroup).Split(';', ',');
         }
 
         static void SetSymbols(string[] symbols)
