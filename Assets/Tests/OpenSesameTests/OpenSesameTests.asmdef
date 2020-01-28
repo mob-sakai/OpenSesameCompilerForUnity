@@ -1,5 +1,5 @@
 {
-    "name": "Coffee.OpenSesame.Tests.Referenced",
+    "name": "OpenSesameTests",
     "references": [],
     "optionalUnityReferences": [
         "TestAssemblies"

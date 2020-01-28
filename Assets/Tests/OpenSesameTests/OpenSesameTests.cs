@@ -1,61 +1,13 @@
-﻿using System.Collections;
+using System.Collections;
 using System.Collections.Generic;
 using NUnit.Framework;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.TestTools;
 
-namespace Coffee.OpenSesame
+namespace CoffeeOpenSesameTests
 {
-    class ReferenceTest
-    {
-        class InheritedClass : InternalClass
-        {
-            [Test]
-            public void PrivateMethod()
-            {
-                var s = PrivateGet();
-                Assert.AreEqual(s.PrivateString, "private");
-            }
-
-            [Test]
-            public void InternalMethod()
-            {
-                var s = InternalGet();
-                Assert.AreEqual(s.InternalString, "internal");
-            }
-        }
-
-        class ImplClass : InternalInterface
-        {
-            public InternalEntityClass PublicGet()
-            {
-                return new InternalEntityClass();
-            }
-
-            [Test]
-            public void Method()
-            {
-                Assert.IsNotNull(PublicGet());
-            }
-
-            [Test]
-            public void InternalField()
-            {
-                var e = new InternalEntityClass();
-                Assert.AreEqual(e.InternalString, "internal");
-            }
-
-            [Test]
-            public void PrivateField()
-            {
-                var e = new InternalEntityClass();
-                Assert.AreEqual(e.PrivateString, "private");
-            }
-        }
-    }
-
-    class OpenSesameTest
+    class ScriptDefineSymbolTest
     {
         [Test]
         public void DefineSymbols()

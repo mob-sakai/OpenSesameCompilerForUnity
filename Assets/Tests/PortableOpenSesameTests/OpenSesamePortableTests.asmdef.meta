@@ -1,7 +1,7 @@
 fileFormatVersion: 2
-guid: f70a1ed2c8cf34a838cba09e5fa14c61
+guid: fc1a8fb1d32a0417385533b6df0d245c
 AssemblyDefinitionImporter:
   externalObjects: {}
-  userData: '{"OpenSesame":true,"ModifySymbols":""}'
+  userData: '{"OpenSesame":false,"ModifySymbols":"","Optimize":false}'
   assetBundleName: 
   assetBundleVariant: 

@@ -1,8 +1,6 @@
 {
-    "name": "Coffee.OpenSesame.Test",
-    "references": [
-        "Coffee.OpenSesame.Tests.Referenced"
-    ],
+    "name": "OpenSesamePortableTests",
+    "references": [],
     "optionalUnityReferences": [
         "TestAssemblies"
     ],
