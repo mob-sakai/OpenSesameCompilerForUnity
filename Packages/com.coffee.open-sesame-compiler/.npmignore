@@ -3,8 +3,8 @@
 .vscode/
 *.sln
 
-Editor/Coffee.OpenSesame.Bootstrap/*
-Editor/Coffee.OpenSesame.Bootstrap.meta
+Editor/Coffee.OpenSesame/*
+Editor/Coffee.OpenSesame.meta
 Editor/Coffee.OpenSesame.Dev/*
 Editor/Coffee.OpenSesame.Dev.meta
 
