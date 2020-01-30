@@ -1,14 +1,23 @@
-!*~
+# Windows
+Thumbs.db
+Desktop.ini
+
+# macOS
+.DS_Store
+
+# VS
 .vs/
 .vscode/
-*.sln
+obj/
+bin/
 
+# NPM
+node_modules/
+
+# package
 Editor/Coffee.OpenSesame/*
 Editor/Coffee.OpenSesame.meta
 Editor/Coffee.OpenSesame.Dev/*
 Editor/Coffee.OpenSesame.Dev.meta
-
-obj/
-bin/
-Tests/
-Tests.meta
+*.tgz
+.releaserc
