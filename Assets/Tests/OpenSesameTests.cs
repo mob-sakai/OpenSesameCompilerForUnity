@@ -1,12 +1,13 @@
-﻿using System.Collections;
+using System.Collections;
+using System.Collections.Generic;
 using NUnit.Framework;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.TestTools;
 
-namespace Coffee.OpenSesame
+namespace CoffeeOpenSesameTests
 {
-    class OpenSesameTest
+    class ScriptDefineSymbolTest
     {
         [Test]
         public void DefineSymbols()
@@ -26,6 +27,18 @@ namespace Coffee.OpenSesame
 #if !TRACE
             Debug.Log(log);
 #endif
+        }
+    }
+
+    class RuntimeTest
+    {
+        [Test]
+        public void ListPool()
+        {
+            List<int> list = UnityEngine.UI.ListPool<int>.Get();
+            list.Add(1);
+            list.Clear();
+            UnityEngine.UI.ListPool<int>.Release(list);
         }
     }
 
@@ -85,6 +98,15 @@ namespace Coffee.OpenSesame
         public void PrivateConstant()
         {
             Assert.AreEqual(EditorGUIUtility.EditorLockTracker.k_LockMenuText, "Lock");
+        }
+
+        [Test]
+        public void GenericAdd()
+        {
+            var list = new List<EditorGUIUtility.EditorLockTracker>();
+            list.Add(new EditorGUIUtility.EditorLockTracker());
+
+            Assert.AreEqual(list.Count, 1);
         }
     }
 }
