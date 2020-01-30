@@ -81,7 +81,6 @@ namespace Coffee.OpenSesame
             if (setting.SholdModifyDefines)
             {
                 Log("Modify scripting define symbols: {0}", responseFile);
-                // var symbols = setting.ModifySymbols.Split(';', ',');
                 var text = File.ReadAllText(responseFile);
                 var defines = Regex.Matches(text, "^/define:(.*)$", RegexOptions.Multiline)
                         .Cast<Match>()

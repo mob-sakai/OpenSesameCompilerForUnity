@@ -90,7 +90,8 @@ namespace Coffee.OpenSesame
                 using (new EditorGUILayout.HorizontalScope())
                 using (var ccs = new EditorGUI.ChangeCheckScope())
                 {
-                    var dllPath = Path.Combine(Path.GetDirectoryName(importer.assetPath), "OpenSesame.Portable.dll");
+                    var assemblyName = GetAssemblyName(importer.assetPath);
+                    var dllPath = Path.Combine(Path.GetDirectoryName(importer.assetPath), "OpenSesamePortable." + assemblyName +".dll");
                     EditorGUILayout.ToggleLeft(s_PortableModeText, File.Exists(dllPath), GUILayout.Width(EditorGUIUtility.labelWidth - 20));
                     if (ccs.changed)
                         EditorApplication.delayCall += () => SwitchPortableMode(dllPath);
