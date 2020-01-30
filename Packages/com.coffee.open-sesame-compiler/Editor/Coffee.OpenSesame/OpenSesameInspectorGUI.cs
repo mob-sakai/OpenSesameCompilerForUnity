@@ -72,7 +72,7 @@ namespace Coffee.OpenSesame
                 }
             }
 
-                EditorGUI.indentLevel++;
+            EditorGUI.indentLevel++;
             if (s_OpenSettings)
             {
                 // Modify symbols.
