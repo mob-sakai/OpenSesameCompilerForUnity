@@ -24,6 +24,11 @@ namespace Coffee.OpenSesame
                 UnityEngine.Debug.LogFormat(kLogHeader + format, args);
         }
 
+        static void Error(string format, params object[] args)
+        {
+            UnityEngine.Debug.LogErrorFormat(kLogHeader + format, args);
+        }
+
         public static object GetScriptAssembly(string assemblyName)
         {
             Type tEditorCompilationInterface = Type.GetType("UnityEditor.Scripting.ScriptCompilation.EditorCompilationInterface, UnityEditor");
@@ -173,6 +178,17 @@ namespace Coffee.OpenSesame
             LogEnabled = PlayerSettings.GetScriptingDefineSymbolsForGroup(EditorUserBuildSettings.selectedBuildTargetGroup)
                 .Split(';', ',')
                 .Any(x => x == "OPEN_SESAME_LOG");
+
+            var assembly = typeof(Core).Assembly;
+            Log("Activate OpenSesame assembly: {0} ({1})", FileUtil.GetProjectRelativePath(assembly.Location), assembly.GetName().Version);
+
+            var cscPath = OpenSesameInstaller.GetInstalledCompiler();
+            if (string.IsNullOrEmpty(cscPath))
+            {
+                Error("Failed to install Open Sesame Compiler ver {0}", OpenSesameInstaller.Version);
+                return;
+            }
+            Log("Installed OpenSesame compiler: {0} ({1})", cscPath, OpenSesameInstaller.Version);
 
             Log("Start watching assembly compilation...");
             CompilationPipeline.assemblyCompilationStarted += OnAssemblyCompilationStarted;

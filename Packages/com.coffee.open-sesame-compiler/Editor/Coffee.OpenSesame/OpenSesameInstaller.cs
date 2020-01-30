@@ -10,20 +10,37 @@ using UnityEngine;
 namespace Coffee.OpenSesame
 {
     [InitializeOnLoad]
-    internal class OpenSesameInstaller
+    internal static class OpenSesameInstaller
     {
-        const string kCompilerVersion = "3.4.0";
-        static string kLogHeader = "";
+        static bool sIsInstallFailed;
+        public const string Version = "3.4.0";
+        static string kLogHeader = "<color=#c34062><b>[OpenSesameInstaller]</b></color> ";
 
         static void Log(string format, params object[] args)
         {
             if (Core.LogEnabled)
-                UnityEngine.Debug.LogFormat("<color=#0063b1><b>[OpenSesameInstaller]</b></color> " + format, args);
+                UnityEngine.Debug.LogFormat(kLogHeader + format, args);
         }
 
         public static string GetInstalledCompiler()
         {
-            return InstallCompiler(kCompilerVersion);
+            if (sIsInstallFailed)
+                return "";
+
+            try
+            {
+                return InstallCompiler(Version);
+            }
+            catch (Exception ex)
+            {
+                sIsInstallFailed = true;
+                UnityEngine.Debug.LogException(new Exception(kLogHeader + ex.Message, ex.InnerException));
+                return "";
+            }
+            finally
+            {
+                EditorUtility.ClearProgressBar();
+            }
         }
 
         static string InstallCompiler(string version)
@@ -33,6 +50,7 @@ namespace Coffee.OpenSesame
             string dowloadPath = Path.GetTempFileName() + ".nuget";
             string installPath = ("Library/" + packageId).Replace('/', Path.DirectorySeparatorChar);
             string cscToolExe = (installPath + "/tools/csc.exe").Replace('/', Path.DirectorySeparatorChar);
+
 
             // OpenSesame compiler is already installed.
             if (File.Exists(cscToolExe))
@@ -46,6 +64,7 @@ namespace Coffee.OpenSesame
 
             // Download csc from nuget.
             UnityEngine.Debug.LogFormat(kLogHeader + "Download {0} from nuget: {1}", packageId, url);
+            EditorUtility.DisplayProgressBar("Open Sesame Installer", string.Format("Download {0} from nuget", packageId), 0.2f);
             try
             {
                 using (var client = new WebClient())
@@ -61,6 +80,7 @@ namespace Coffee.OpenSesame
             }
             finally
             {
+                EditorUtility.ClearProgressBar();
                 ServicePointManager.ServerCertificateValidationCallback -= OnServerCertificateValidation;
             }
 
@@ -69,12 +89,13 @@ namespace Coffee.OpenSesame
             string exe = Path.Combine(EditorApplication.applicationContentsPath,
                 Application.platform == RuntimePlatform.WindowsEditor ? "Tools\\7z.exe" : "Tools/7za");
             UnityEngine.Debug.LogFormat(kLogHeader + "Extract {0} to {1} with 7z command: {2} {3}", dowloadPath, installPath, exe, args);
+            EditorUtility.DisplayProgressBar("Open Sesame Installer", string.Format("Extract {0}", dowloadPath), 0.4f);
             Process.Start(exe, args).WaitForExit();
 
             if (File.Exists(cscToolExe))
                 return cscToolExe;
 
-            throw new Exception(kLogHeader + "Open Sesame compiler is not found at " + cscToolExe);
+            throw new FileNotFoundException("Open Sesame compiler is not found at " + cscToolExe);
         }
 
         private static bool OnServerCertificateValidation(object _, X509Certificate __, X509Chain ___, SslPolicyErrors ____)
