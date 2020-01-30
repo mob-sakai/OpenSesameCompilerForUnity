@@ -9,6 +9,7 @@ using System.Text.RegularExpressions;
 using UnityEditor;
 using UnityEngine;
 using UnityEditor.Compilation;
+using System.Security.Cryptography;
 
 namespace Coffee.OpenSesame
 {
@@ -165,7 +166,7 @@ namespace Coffee.OpenSesame
                 var dst = Path.Combine(Path.GetDirectoryName(Path.GetDirectoryName(originPath)), assemblyName + ".dll");
                 var src = "Library/ScriptAssemblies/" + Path.GetFileName(dst);
                 UnityEngine.Debug.Log(kLogHeader + "<b>Publish assembly as dll:</b> " + dst);
-                File.Copy(src, dst, true);
+                CopyFileIfUpdated(src, dst);
 
                 EditorApplication.delayCall += () => AssetDatabase.ImportAsset(dst);
             }
@@ -173,6 +174,29 @@ namespace Coffee.OpenSesame
             {
                 UnityEngine.Debug.LogException(new Exception(kLogHeader + e.Message, e.InnerException));
             }
+        }
+
+        public static void CopyFileIfUpdated(string src, string dst)
+        {
+            if (!File.Exists(src))
+                return;
+
+            if (File.Exists(dst))
+            {
+                using (var srcFs = new FileStream(src, FileMode.Open))
+                using (var dstFs = new FileStream(dst, FileMode.Open))
+                using (var md5 = new MD5CryptoServiceProvider())
+                {
+                    if (md5.ComputeHash(srcFs).SequenceEqual(md5.ComputeHash(dstFs)))
+                        return;
+                }
+            }
+
+            var dir = Path.GetDirectoryName(dst);
+            if (!Directory.Exists(dir))
+                Directory.CreateDirectory(dir);
+
+            File.Copy(src, dst, true);
         }
 
         static Core()

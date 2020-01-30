@@ -108,10 +108,9 @@ namespace Coffee.OpenSesame
                 AssetDatabase.DeleteAsset(dllPath);
             else
             {
-                File.Copy(originPath, dllPath, true);
-                if (File.Exists(originPath + ".meta"))
-                    File.Copy(originPath + ".meta", dllPath + ".meta", true);
-                AssetDatabase.ImportAsset(dllPath);
+                Core.CopyFileIfUpdated(originPath, dllPath);
+                Core.CopyFileIfUpdated(originPath + ".meta", dllPath + ".meta");
+                EditorApplication.delayCall += () => AssetDatabase.ImportAsset(dllPath);
             }
         }
 
