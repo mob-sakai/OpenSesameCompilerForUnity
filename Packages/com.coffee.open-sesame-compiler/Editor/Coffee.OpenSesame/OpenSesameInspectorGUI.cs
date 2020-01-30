@@ -1,4 +1,5 @@
 using System.IO;
+using System.Collections.Generic;
 using UnityEditor;
 using UnityEditorInternal;
 using UnityEngine;
@@ -16,6 +17,8 @@ namespace Coffee.OpenSesame
         static GUIContent s_PublishText;
         static GUIContent s_HelpText;
         static bool s_OpenSettings = false;
+        static Dictionary<string, string> s_PortableVersions = new Dictionary<string, string>();
+
 
         static OpenSesameInspectorGUI()
         {
@@ -84,12 +87,21 @@ namespace Coffee.OpenSesame
 
                 // Portable mode.
                 using (new EditorGUI.DisabledScope(!setting.OpenSesame))
+                using (new EditorGUILayout.HorizontalScope())
                 using (var ccs = new EditorGUI.ChangeCheckScope())
                 {
                     var dllPath = Path.Combine(Path.GetDirectoryName(importer.assetPath), "OpenSesame.Portable.dll");
-                    EditorGUILayout.ToggleLeft(s_PortableModeText, File.Exists(dllPath));
+                    EditorGUILayout.ToggleLeft(s_PortableModeText, File.Exists(dllPath), GUILayout.Width(EditorGUIUtility.labelWidth - 20));
                     if (ccs.changed)
                         EditorApplication.delayCall += () => SwitchPortableMode(dllPath);
+
+                    string version = "";
+                    if (File.Exists(dllPath) && !s_PortableVersions.TryGetValue(dllPath, out version))
+                    {
+                        var info = System.Diagnostics.FileVersionInfo.GetVersionInfo(dllPath);
+                        s_PortableVersions[dllPath] = version = info != null ? info.FileVersion : "Not available";
+                    }
+                    GUILayout.Label(version);
                 }
             }
             EditorGUI.indentLevel--;
