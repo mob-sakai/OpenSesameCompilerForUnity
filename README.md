@@ -1,7 +1,7 @@
 Open Sesame Compiler For Unity
 ===
 
-A custom Roslyn compiler to access internals/privates for Unity.  
+A custom Roslyn compiler and editor extension to access internals/privates for Unity.  
 In other words, you can access to **any internals/privates** in other assemblies, **without reflection**.
 
 Let's say, **"Open sesame!"**
@@ -38,28 +38,33 @@ For details about `IgnoresAccessChecksToAttribute`, see
 
 #### Features
 
-* Easy to use: this package is out of the box
+* Easy to use
+  * this package is out of the box.
 * Allow to access to any internal/private elements (types/members) in other assemblies, **without reflection**
   * Create instance
   * Get/set fields or properties
   * Call method
   * Create extension method that contains private access
+  * etc.
 * Processes only `AssemblyDefinitionFile` you configured
 * Add/remove the scripting define symbols for each `AssemblyDefinitionFiles`
 * Support C#8
+* Support `.Net 3.5`, `.Net 4.x` and `.Net Standard 2.0`
 * `dotnet` is not required
-* Export as 'portable dll'
-  * Publish a dll that works **without this package**
+* Publish as dll
+  * Published dll works **without this package**.
+* Portable mode
+  * Without publishing, make the assembly available to access to internals/privates in other assemblies, even in projects that do not have this package installed.
+  * The best option when distributing as a package.
 
 #### NOTE: Unsupported Features
 
-* Inherit internal/private classes
-  * Same for interfaces
-  * Try `InternalsVisibleToAttribute` if possible
-* Set value into readonly field
+* Set/get value into readonly field
   * Use reflection
 * IDE support
-  * Try `InternalsVisibleToAttribute` if possible
+  * Use [Csc-Manager](https://github.com/pCYSl5EDgo/Csc-Manager) to modify your [VisualStudio Code](https://code.visualstudio.com/download) and [C# extension](https://marketplace.visualstudio.com/items?itemName=ms-vscode.csharp).
+    * `csc-manager enable-vscode`: Show internals/privates in other assembly.
+    * `csc-manager disable-vscode`: Hide them.
 
 
 <br><br><br><br>
@@ -74,8 +79,10 @@ Find `Packages/manifest.json` in your project and edit it to look like this:
   },
 }
 ```
+To update the package, change suffix `#{version}` to the target version.
 
-To update the package, add/change prefix `#version` to the target version.  
+* e.g. `"com.coffee.open-sesame-compiler": "https://github.com/mob-sakai/OpenSesameCompilerForUnity.git#1.0.0",`
+
 Or, use [UpmGitExtension](https://github.com/mob-sakai/UpmGitExtension).
 
 
@@ -88,18 +95,17 @@ Or, use [UpmGitExtension](https://github.com/mob-sakai/UpmGitExtension).
 <br><br><br><br>
 ## Usage
 
-### Compile AssemblyDefinitionFile to an 'internal accessible' dll
-
 1. Select a `AssemblyDefinitionFile` in project view
 2. Configure setting for the assembly in inspector view:  
-![](https://user-images.githubusercontent.com/12690315/71836600-ad411380-30f7-11ea-8295-45fac816437a.png)
+![](https://user-images.githubusercontent.com/12690315/73439891-bab68a00-4393-11ea-9928-a286c9c3e6e0.png)
    * **Open Sesame**: Use OpenSesameCompiler instead of default csc to compile this assembly. In other words, allow this assembly to access to internals/privates to other assemblies without reflection.
-   * **Symbols**: how/hide the scripting define symbols to modify for this assembly.
+   * **Settings**: how/hide the detail settings for this assembly.
      * **Modify Symbols**: When compiling this assembly, add/remove semicolon separated symbols. Symbols starting with '!' will be removed.  
-     **NOTE: This feature is available even when 'Open Sesame' is disabled** 
+     **NOTE: This feature is available even when 'Open Sesame' is disabled**
+     * **Portable Mode**: Make this assembly available to access in internals/privates to other assemblies, even in projects that do not have `Open Sesame Compiler` package installed.
    * **Publish**: Publish this assembly as dll to the parent directory.
    * **Help**: Open help page on browser.
-3. Enjoy!
+1. Enjoy!
 
 
 
@@ -121,7 +127,7 @@ EditorApplication.CallDelayed(() => Debug.Log("delayed"), 1);
 4. Select `Assets/Tests/Coffee.OpenSesame.Test.asmdef` in project view and activate 'Open Sesame' in inspector view  
 ![](https://user-images.githubusercontent.com/12690315/71837979-255d0880-30fb-11ea-99bc-3bb96b77cfa6.gif)
 5. Run all edit mode tests in test runner view (`Windows > General > Test Runner`).  
-The compilation error is gone, but some tests do not pass.  
+The compilation error is gone, but some tests that depend on symbols will not pass.  
 ![](https://user-images.githubusercontent.com/12690315/71838489-483bec80-30fc-11ea-9af4-83e2ddd7d894.png)
 ```cs
 [Test]
@@ -145,12 +151,19 @@ public void RemoveSymbols()
 }
 ```
 6. Enable `symbols` to modify scripting define symbols for this assembly.  
-Then edit `Modify Symbols` to `OSC_TEST;!TRACE`. This means "add `OSC_TEST` symbol and remove `TRACE` symbol for this assembly."  
+Then edit `Modify Symbols` to `OSC_TEST;!TRACE`. This means *"add `OSC_TEST` symbol and remove `TRACE` symbol for this assembly."*  
 ![](https://user-images.githubusercontent.com/12690315/71839029-9a314200-30fd-11ea-8596-d1a6ea188741.png)
 1. All tests pass!  
 ![](https://user-images.githubusercontent.com/12690315/71839100-c2b93c00-30fd-11ea-86a7-a2f1aac0a4cc.png)
 
 For more details, see [the article 1 (Japanese)](https://qiita.com/mob-sakai/items/f3bbc0c45abc31ea7ac0) and [the article 2 (Japanese)](https://qiita.com/mob-sakai/items/a24780d68a6133be338f).
+
+
+
+<br><br><br><br>
+## Contributing
+
+For details, see [CONTRIBUTING](https://github.com/mob-sakai/OpenSesameCompilerForUnity/blob/upm/CONTRIBUTING.md) and [CODE_OF_CONDUCT](https://github.com/mob-sakai/OpenSesameCompilerForUnity/blob/upm/CODE_OF_CONDUCT.md).
 
 
 

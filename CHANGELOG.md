@@ -1,3 +1,24 @@
+# [1.0.0-preview.13](https://github.com/mob-sakai/OpenSesameCompilerForUnity/compare/v1.0.0-preview.12...v1.0.0-preview.13) (2020-01-30)
+
+
+### Bug Fixes
+
+* fix asmdef settings for development ([ecda4e9](https://github.com/mob-sakai/OpenSesameCompilerForUnity/commit/ecda4e95ee174e7828b6bbf738d6f423ae87bc87))
+* fix inspector GUI ([69aaffe](https://github.com/mob-sakai/OpenSesameCompilerForUnity/commit/69aaffe1649ff528cda6b9a2a707879ed874d14f))
+* fix portable dll name ([a75d9bd](https://github.com/mob-sakai/OpenSesameCompilerForUnity/commit/a75d9bd23d171d3c001362f1b487af08f8f8bafe))
+* ignore unnecessary file copying ([a5acd99](https://github.com/mob-sakai/OpenSesameCompilerForUnity/commit/a5acd990fbfe5041e74af33a9bf4afa93a099a7b))
+
+
+### Features
+
+* add develop menu ([0856e78](https://github.com/mob-sakai/OpenSesameCompilerForUnity/commit/0856e78d7d8f35e9e8aec96c628eaae94040018e))
+* add portable mode ([f72f635](https://github.com/mob-sakai/OpenSesameCompilerForUnity/commit/f72f635d9ee7d188a121a9de8d9dfa80b53fafc5))
+* install compiler on load ([7cee469](https://github.com/mob-sakai/OpenSesameCompilerForUnity/commit/7cee4694f120c1b4338d4fcac5d821a5b0579fa9))
+* reload published dll ([1391255](https://github.com/mob-sakai/OpenSesameCompilerForUnity/commit/1391255bcc0cacb2448d940ea97dc2eeadcd2f4d))
+* remove bootstrap ([69cf366](https://github.com/mob-sakai/OpenSesameCompilerForUnity/commit/69cf3662bbbe0ed5b0a536c52041c4ee8dfe4e3d))
+* remove portable script ([d4a9325](https://github.com/mob-sakai/OpenSesameCompilerForUnity/commit/d4a9325cc6849088866b86b3d2b2802ca04dbe25))
+* show portable version ([4121e4e](https://github.com/mob-sakai/OpenSesameCompilerForUnity/commit/4121e4eae4bca07b21bfe059d5dfa3a81493ff2a))
+
 # [1.0.0-preview.12](https://github.com/mob-sakai/OpenSesameCompilerForUnity/compare/v1.0.0-preview.11...v1.0.0-preview.12) (2020-01-16)
 
 
