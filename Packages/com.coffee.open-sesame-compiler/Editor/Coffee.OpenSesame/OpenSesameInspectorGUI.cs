@@ -92,7 +92,7 @@ namespace Coffee.OpenSesame
                 {
                     var assemblyName = GetAssemblyName(importer.assetPath);
                     var dllPath = Path.Combine(Path.GetDirectoryName(importer.assetPath), "OpenSesamePortable." + assemblyName +".dll");
-                    EditorGUILayout.ToggleLeft(s_PortableModeText, File.Exists(dllPath), GUILayout.Width(EditorGUIUtility.labelWidth - 20));
+                    EditorGUILayout.ToggleLeft(s_PortableModeText, File.Exists(dllPath));
                     if (ccs.changed)
                         EditorApplication.delayCall += () => SwitchPortableMode(dllPath);
 
@@ -102,6 +102,8 @@ namespace Coffee.OpenSesame
                         var info = System.Diagnostics.FileVersionInfo.GetVersionInfo(dllPath);
                         s_PortableVersions[dllPath] = version = info != null ? info.FileVersion : "Not available";
                     }
+                    
+                    GUILayout.FlexibleSpace();
                     GUILayout.Label(version);
                 }
             }
