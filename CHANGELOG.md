@@ -1,3 +1,10 @@
+# [1.0.0-preview.15](https://github.com/mob-sakai/OpenSesameCompilerForUnity/compare/v1.0.0-preview.14...v1.0.0-preview.15) (2020-01-30)
+
+
+### Bug Fixes
+
+* support windows line-ending ([98f4299](https://github.com/mob-sakai/OpenSesameCompilerForUnity/commit/98f4299129746c0a80b5fe9d890bff040eac5e38))
+
 # [1.0.0-preview.14](https://github.com/mob-sakai/OpenSesameCompilerForUnity/compare/v1.0.0-preview.13...v1.0.0-preview.14) (2020-01-30)
 
 

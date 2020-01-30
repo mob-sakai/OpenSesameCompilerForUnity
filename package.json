@@ -2,7 +2,7 @@
   "name": "com.coffee.open-sesame-compiler",
   "displayName": "Open Sesame Compiler",
   "description": "A Roslyn compiler to access internals/privates. In other words, you can access to any internals/privates in other assemblies, without reflection. Let's say, \"Open sesame!\"",
-  "version": "1.0.0-preview.14",
+  "version": "1.0.0-preview.15",
   "unity": "2018.3",
   "license": "MIT",
   "repository": {
