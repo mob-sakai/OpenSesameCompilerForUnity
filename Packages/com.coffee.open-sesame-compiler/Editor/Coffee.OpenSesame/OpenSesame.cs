@@ -16,7 +16,7 @@ namespace Coffee.OpenSesame
     internal static class Core
     {
         public static bool LogEnabled;
-        public const string kLogHeader = "<b><color=#9a4089>[OpenSesame]</color></b> ";
+        public static string kLogHeader = "<b><color=#9a4089>[OpenSesame]</color></b> ";
 
         static void Log(string format, params object[] args)
         {
@@ -96,7 +96,7 @@ namespace Coffee.OpenSesame
 
             if (setting.OpenSesame)
             {
-                var cscToolExe = OpenSesameInstaller.GetInstalledCompiler();
+                var cscToolExe = OpenSesameInstaller.GetInstalledCompilerPath();
                 Log("Change csc tool exe to {0}", cscToolExe);
                 if (Application.platform == RuntimePlatform.WindowsEditor)
                 {
@@ -164,7 +164,7 @@ namespace Coffee.OpenSesame
                 // Publish a dll to parent directory.
                 var dst = Path.Combine(Path.GetDirectoryName(Path.GetDirectoryName(originPath)), assemblyName + ".dll");
                 var src = "Library/ScriptAssemblies/" + Path.GetFileName(dst);
-                UnityEngine.Debug.Log(kLogHeader + "Publish assembly as dll: " + dst);
+                UnityEngine.Debug.Log(kLogHeader + "<b>Publish assembly as dll:</b> " + dst);
                 File.Copy(src, dst, true);
             }
             catch (Exception e)
@@ -180,15 +180,17 @@ namespace Coffee.OpenSesame
                 .Any(x => x == "OPEN_SESAME_LOG");
 
             var assembly = typeof(Core).Assembly;
-            Log("Activate OpenSesame assembly: {0} ({1})", FileUtil.GetProjectRelativePath(assembly.Location), assembly.GetName().Version);
+            var asmInfo = string.Format("{0} ({1})", FileUtil.GetProjectRelativePath(assembly.Location), assembly.GetName().Version);
+            Log("Activate OpenSesame assembly: <b>{0}</b>", asmInfo);
+            kLogHeader = string.Format("<b><color=#9a4089>[OpenSesame ({0})]</color></b> ", assembly.GetName().Version);
 
-            var cscPath = OpenSesameInstaller.GetInstalledCompiler();
+            var cscPath = OpenSesameInstaller.GetInstalledCompilerPath();
             if (string.IsNullOrEmpty(cscPath))
             {
-                Error("Failed to install Open Sesame Compiler ver {0}", OpenSesameInstaller.Version);
+                Error("Failed to install Open Sesame Compiler ver {0}. OpenSesame assembly: {1}.", OpenSesameInstaller.Version, asmInfo);
                 return;
             }
-            Log("Installed OpenSesame compiler: {0} ({1})", cscPath, OpenSesameInstaller.Version);
+            Log("Installed OpenSesame compiler: <b>{0}</b>", cscPath);
 
             Log("Start watching assembly compilation...");
             CompilationPipeline.assemblyCompilationStarted += OnAssemblyCompilationStarted;

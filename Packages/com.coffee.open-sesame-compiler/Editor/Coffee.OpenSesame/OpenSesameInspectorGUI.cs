@@ -61,7 +61,7 @@ namespace Coffee.OpenSesame
                 if (GUILayout.Button(s_PublishText, EditorStyles.miniButtonMid))
                 {
                     OpenSesameSetting.AssemblyNameToPublish = GetAssemblyName(importer.assetPath);
-                    UnityEngine.Debug.Log(Core.kLogHeader + "Request to publish the assembly as dll: " + OpenSesameSetting.AssemblyNameToPublish);
+                    UnityEngine.Debug.Log(Core.kLogHeader + "<b>Request to publish the assembly as dll:</b> " + OpenSesameSetting.AssemblyNameToPublish);
                     settingChanged = true;
                 }
 

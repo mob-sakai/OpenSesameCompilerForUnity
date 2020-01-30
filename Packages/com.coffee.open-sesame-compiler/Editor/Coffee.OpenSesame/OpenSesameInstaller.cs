@@ -9,10 +9,10 @@ using UnityEngine;
 
 namespace Coffee.OpenSesame
 {
-    [InitializeOnLoad]
     internal static class OpenSesameInstaller
     {
         static bool sIsInstallFailed;
+        static string sInstallPath;
         public const string Version = "3.4.0";
         static string kLogHeader = "<color=#c34062><b>[OpenSesameInstaller]</b></color> ";
 
@@ -22,25 +22,28 @@ namespace Coffee.OpenSesame
                 UnityEngine.Debug.LogFormat(kLogHeader + format, args);
         }
 
-        public static string GetInstalledCompiler()
+        public static string GetInstalledCompilerPath()
         {
             if (sIsInstallFailed)
                 return "";
 
+            if (!string.IsNullOrEmpty(sInstallPath))
+                return sInstallPath;
+
             try
             {
-                return InstallCompiler(Version);
+                sInstallPath = InstallCompiler(Version);
             }
             catch (Exception ex)
             {
                 sIsInstallFailed = true;
                 UnityEngine.Debug.LogException(new Exception(kLogHeader + ex.Message, ex.InnerException));
-                return "";
             }
             finally
             {
                 EditorUtility.ClearProgressBar();
             }
+            return sInstallPath;
         }
 
         static string InstallCompiler(string version)
