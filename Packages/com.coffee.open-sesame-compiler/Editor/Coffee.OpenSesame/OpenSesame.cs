@@ -71,9 +71,9 @@ namespace Coffee.OpenSesame
                 Log("Convert response file for Mono to .Net: {0}", responseFile);
                 var text = File.ReadAllText(responseFile);
                 text = "/preferreduilang:en-US\n" + text;
-                text = Regex.Replace(text, "^-langversion:\\d+$", "/langversion:latest", RegexOptions.Multiline);
-                text = Regex.Replace(text, "^-debug$", "/debug:portable", RegexOptions.Multiline);
                 text = Regex.Replace(text, "^-", "/", RegexOptions.Multiline);
+                text = Regex.Replace(text, "^/langversion:\\d+$", "/langversion:latest", RegexOptions.Multiline);
+                text = Regex.Replace(text, "^/debug$", "/debug:portable", RegexOptions.Multiline);
                 File.WriteAllText(responseFile, text);
             }
 
@@ -82,11 +82,11 @@ namespace Coffee.OpenSesame
             {
                 Log("Modify scripting define symbols: {0}", responseFile);
                 var text = File.ReadAllText(responseFile);
-                var defines = Regex.Matches(text, "^/define:(.*)$", RegexOptions.Multiline)
+                var defines = Regex.Matches(text, "^/define:([^\r\n]+)", RegexOptions.Multiline)
                         .Cast<Match>()
                         .Select(x => x.Groups[1].Value);
 
-                text = Regex.Replace(text, "^/define:.*$", "", RegexOptions.Multiline);
+                text = Regex.Replace(text, "[\r\n]+/define:[^\r\n]+", "");
                 foreach (var d in ModifyDefines(defines, setting.OpenSesame, setting.ModifySymbols))
                 {
                     text += System.Environment.NewLine + "/define:" + d;
