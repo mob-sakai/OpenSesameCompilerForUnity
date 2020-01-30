@@ -10,5 +10,7 @@
     "overrideReferences": false,
     "precompiledReferences": [],
     "autoReferenced": false,
-    "defineConstraints": []
+    "defineConstraints": [
+        "OPEN_SESAME_DEV"
+    ]
 }
