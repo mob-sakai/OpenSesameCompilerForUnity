@@ -13,11 +13,10 @@ using UnityEditor.Compilation;
 namespace Coffee.OpenSesame
 {
     [InitializeOnLoad]
-    internal class Core
+    internal static class Core
     {
         public static bool LogEnabled;
-        public static string kLogHeader = "";
-        static string AssemblyNameToPublish;
+        public const string kLogHeader = "<b><color=#9a4089>[OpenSesame]</color></b> ";
 
         static void Log(string format, params object[] args)
         {
@@ -126,13 +125,10 @@ namespace Coffee.OpenSesame
                 // Should change compiler process for the assembly?
                 var setting = OpenSesameSetting.GetAtPath(scriptAssembly.Get("OriginPath") as string);
                 if (!setting.SholdChangeCompilerProcess)
-                {
-                    Log("<<<< Assembly compilation started: <i>{0} should not be recompiled.</i>", assemblyName);
                     return;
-                }
-                Log("<<<< Assembly compilation started: <b>{0} should be recompiled.</b>", assemblyName);
 
                 // Create new compiler to recompile.
+                Log("Assembly compilation started: <b>{0} should be recompiled.</b>", assemblyName);
                 Core.ChangeCompilerProcess(compilerTasks[scriptAssembly], setting);
             }
             catch (Exception e)
@@ -151,7 +147,7 @@ namespace Coffee.OpenSesame
                     return;
 
                 OpenSesameSetting.AssemblyNameToPublish = null;
-                Log(">>>> Assembly compilation finished: <b>{0} is requested to publish.</b>", assemblyName);
+                Log("Assembly compilation finished: <b>{0} is requested to publish.</b>", assemblyName);
 
                 // No compilation error?
                 if (messages.Any(x => x.type == CompilerMessageType.Error))
@@ -163,7 +159,7 @@ namespace Coffee.OpenSesame
                 // Publish a dll to parent directory.
                 var dst = Path.Combine(Path.GetDirectoryName(Path.GetDirectoryName(originPath)), assemblyName + ".dll");
                 var src = "Library/ScriptAssemblies/" + Path.GetFileName(dst);
-                UnityEngine.Debug.LogFormat(kLogHeader + "Publish assembly as dll: {1}", dst);
+                UnityEngine.Debug.Log(kLogHeader + "Publish assembly as dll: " + dst);
                 File.Copy(src, dst, true);
             }
             catch (Exception e)
@@ -174,7 +170,6 @@ namespace Coffee.OpenSesame
 
         static Core()
         {
-            kLogHeader = string.Format("<b><color=#9a4089>[OpenSesame ({0})]</color></b> ", typeof(Core).Assembly.GetName().Version);
             LogEnabled = PlayerSettings.GetScriptingDefineSymbolsForGroup(EditorUserBuildSettings.selectedBuildTargetGroup)
                 .Split(';', ',')
                 .Any(x => x == "OPEN_SESAME_LOG");
