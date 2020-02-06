@@ -1,3 +1,10 @@
+# [1.0.0-preview.18](https://github.com/mob-sakai/OpenSesameCompilerForUnity/compare/v1.0.0-preview.17...v1.0.0-preview.18) (2020-02-06)
+
+
+### Bug Fixes
+
+* fix file path problems ([8d9b88b](https://github.com/mob-sakai/OpenSesameCompilerForUnity/commit/8d9b88b83dacb2584b05c3559e8056d51d80ff1a))
+
 # [1.0.0-preview.17](https://github.com/mob-sakai/OpenSesameCompilerForUnity/compare/v1.0.0-preview.16...v1.0.0-preview.17) (2020-02-06)
 
 
