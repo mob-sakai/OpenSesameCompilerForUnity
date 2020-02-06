@@ -177,9 +177,11 @@ namespace Coffee.OpenSesame
 
         public static void CopyFileIfUpdated(string src, string dst)
         {
+            src = Path.GetFullPath(src);
             if (!File.Exists(src))
                 return;
 
+            dst = Path.GetFullPath(dst);
             if (File.Exists(dst))
             {
                 using (var srcFs = new FileStream(src, FileMode.Open))
