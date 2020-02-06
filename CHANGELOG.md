@@ -1,3 +1,10 @@
+# [1.0.0-preview.17](https://github.com/mob-sakai/OpenSesameCompilerForUnity/compare/v1.0.0-preview.16...v1.0.0-preview.17) (2020-02-06)
+
+
+### Bug Fixes
+
+* fix file path on copying ([6c554ea](https://github.com/mob-sakai/OpenSesameCompilerForUnity/commit/6c554ea57262b3f2bc482d49b36ffc460a54a582))
+
 # [1.0.0-preview.16](https://github.com/mob-sakai/OpenSesameCompilerForUnity/compare/v1.0.0-preview.15...v1.0.0-preview.16) (2020-02-06)
 
 
