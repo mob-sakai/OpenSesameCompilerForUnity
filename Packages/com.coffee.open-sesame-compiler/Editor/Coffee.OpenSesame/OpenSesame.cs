@@ -165,7 +165,7 @@ namespace Coffee.OpenSesame
                 var dst = Path.Combine(Path.GetDirectoryName(Path.GetDirectoryName(originPath)), assemblyName + ".dll");
                 var src = "Library/ScriptAssemblies/" + Path.GetFileName(dst);
                 UnityEngine.Debug.Log(kLogHeader + "<b>Publish assembly as dll:</b> " + dst);
-                CopyFileIfUpdated(src, dst);
+                CopyFileIfUpdated(Path.GetFullPath(src), Path.GetFullPath(dst));
 
                 EditorApplication.delayCall += () => AssetDatabase.ImportAsset(dst);
             }
