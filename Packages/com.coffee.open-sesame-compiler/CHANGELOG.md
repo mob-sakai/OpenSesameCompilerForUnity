@@ -1,3 +1,10 @@
+# [1.0.0-preview.16](https://github.com/mob-sakai/OpenSesameCompilerForUnity/compare/v1.0.0-preview.15...v1.0.0-preview.16) (2020-02-06)
+
+
+### Bug Fixes
+
+* guid conflict ([a2a33de](https://github.com/mob-sakai/OpenSesameCompilerForUnity/commit/a2a33de7e644755fc0e85a8082655cf754bbe93d))
+
 # [1.0.0-preview.15](https://github.com/mob-sakai/OpenSesameCompilerForUnity/compare/v1.0.0-preview.14...v1.0.0-preview.15) (2020-01-30)
 
 
