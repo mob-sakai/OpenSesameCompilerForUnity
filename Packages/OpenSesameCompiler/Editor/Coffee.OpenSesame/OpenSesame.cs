@@ -70,10 +70,11 @@ namespace Coffee.OpenSesame
             {
                 Log("Convert response file for Mono to .Net: {0}", responseFile);
                 var text = File.ReadAllText(responseFile);
-                text = "/preferreduilang:en-US\n" + text;
+                text = Regex.Replace(text, "[\r\n]+", "\n");
                 text = Regex.Replace(text, "^-", "/", RegexOptions.Multiline);
-                text = Regex.Replace(text, "^/langversion:\\d+$", "/langversion:latest", RegexOptions.Multiline);
-                text = Regex.Replace(text, "^/debug$", "/debug:portable", RegexOptions.Multiline);
+                text = Regex.Replace(text, "^/langversion:\\d+", "/langversion:latest", RegexOptions.Multiline);
+                text = Regex.Replace(text, "^/debug", "/debug:portable", RegexOptions.Multiline);
+                text = "/preferreduilang:en-US\n" + text;
                 File.WriteAllText(responseFile, text);
             }
 
