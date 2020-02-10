@@ -1,3 +1,15 @@
+# [1.0.0-preview.19](https://github.com/mob-sakai/OpenSesameCompilerForUnity/compare/v1.0.0-preview.18...v1.0.0-preview.19) (2020-02-10)
+
+
+### Bug Fixes
+
+* resolve asmdef path correctly ([9461dad](https://github.com/mob-sakai/OpenSesameCompilerForUnity/commit/9461dad3954418d963658dbd0d927e69c65e3104))
+
+
+### Features
+
+* set language version in csproj to latest ([07bbda4](https://github.com/mob-sakai/OpenSesameCompilerForUnity/commit/07bbda41f2836face6f1b0a50dda86c359d4c9b2))
+
 # [1.0.0-preview.18](https://github.com/mob-sakai/OpenSesameCompilerForUnity/compare/v1.0.0-preview.17...v1.0.0-preview.18) (2020-02-06)
 
 
