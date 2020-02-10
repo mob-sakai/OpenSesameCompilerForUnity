@@ -1,0 +1,20 @@
+{
+    "name": "OpenSesameAsmdeflTests",
+    "references": [
+        "Coffee.OpenSesame"
+    ],
+    "optionalUnityReferences": [
+        "TestAssemblies"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": false,
+    "defineConstraints": [
+        "OPEN_SESAME_DEV"
+    ]
+}
