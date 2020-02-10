@@ -45,7 +45,7 @@
       [
         "@semantic-release/exec",
         {
-          "prepareCmd": "[[ -d 'Samples' ]] && mv Samples Samples~ && rm -f Samples.meta",
+          "prepareCmd": "test -d Samples && mv Samples Samples~ && rm -f Samples.meta",
           "publishCmd": "tar -xzvf *.tgz && git snapshot --prefix=package --branch=upm --remote=${options.repositoryUrl} --tag=${nextRelease.version} --message=\"${nextRelease.version}\n\n${nextRelease.notes}\""
         }
       ]
