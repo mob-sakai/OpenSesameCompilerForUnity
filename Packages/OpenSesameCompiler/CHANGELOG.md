@@ -1,3 +1,11 @@
+# [1.0.0-preview.20](https://github.com/mob-sakai/OpenSesameCompilerForUnity/compare/v1.0.0-preview.19...v1.0.0-preview.20) (2020-02-10)
+
+
+### Bug Fixes
+
+* fix copying portable dll ([889c84f](https://github.com/mob-sakai/OpenSesameCompilerForUnity/commit/889c84fd8ff4438c0215ab65a7ed943642ceac55))
+* fix for windows ([4eaab54](https://github.com/mob-sakai/OpenSesameCompilerForUnity/commit/4eaab54175a8425ceec1cf2682b743f0b8931dc2))
+
 # [1.0.0-preview.19](https://github.com/mob-sakai/OpenSesameCompilerForUnity/compare/v1.0.0-preview.18...v1.0.0-preview.19) (2020-02-10)
 
 
