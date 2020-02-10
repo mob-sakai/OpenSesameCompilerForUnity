@@ -88,7 +88,7 @@ namespace CoffeeOpenSesameTests
             var tracker = new EditorGUIUtility.EditorLockTracker();
             tracker.lockStateChanged.AddListener(locked =>
             {
-                Debug.Log("locked: " + locked);
+                Debug.Log($"locked: {locked}");
             });
             LogAssert.Expect(LogType.Log, "locked: True");
             tracker.isLocked = true;

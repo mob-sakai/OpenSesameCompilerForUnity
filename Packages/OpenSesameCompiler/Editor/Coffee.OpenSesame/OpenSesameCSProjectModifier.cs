@@ -26,7 +26,15 @@ namespace Coffee.OpenSesame
             var defineText = string.Join(";", defines);
 
             Log("Script defines in {0}.csproj are modified:\n{1}", assemblyName, defineText);
-            return Regex.Replace(content, "<DefineConstants>(.*)</DefineConstants>", string.Format("<DefineConstants>{0}</DefineConstants>", defineText));
+            content = Regex.Replace(content, "<DefineConstants>(.*)</DefineConstants>", string.Format("<DefineConstants>{0}</DefineConstants>", defineText), RegexOptions.Multiline);
+
+            // Use latest language version.
+            if(setting.OpenSesame)
+            {
+                content = Regex.Replace(content, "<LangVersion>.*</LangVersion>", "<LangVersion>latest</LangVersion>", RegexOptions.Multiline);
+            }
+
+            return content;
         }
     }
 }
