@@ -17,12 +17,13 @@ namespace Coffee.OpenSesame.Dev
         {
 #if OPEN_SESAME_DEV
             //Duplicate OpenSesamePortable.cs
-            CompilationPipeline.assemblyCompilationStarted += name =>
+            CompilationPipeline.assemblyCompilationFinished += (name, _) =>
             {
                 if (Path.GetFileNameWithoutExtension(name) != "Coffee.OpenSesame")
                     return;
-
-                CopyFileIfUpdated(openSesamePath + "/OpenSesamePortable.cs", portableTestPath + "/OpenSesamePortable.cs");
+                
+                const string originDll = "Packages/com.coffee.open-sesame-compiler/Editor/Coffee.OpenSesame.dll";
+                CopyFileIfUpdated(name, Path.GetFullPath(originDll));
             };
 #endif
         }
