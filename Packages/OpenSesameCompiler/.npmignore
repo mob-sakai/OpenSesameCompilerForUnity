@@ -20,4 +20,5 @@ Editor/Coffee.OpenSesame.meta
 Editor/Coffee.OpenSesame.Dev/*
 Editor/Coffee.OpenSesame.Dev.meta
 *.tgz
+*.tgz.meta
 .releaserc

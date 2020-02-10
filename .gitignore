@@ -26,4 +26,5 @@ node_modules
 Packages/**/package/
 Packages/**/package.meta
 *.tgz
+*.tgz.meta
 /demo
