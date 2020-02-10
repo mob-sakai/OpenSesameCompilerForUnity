@@ -118,16 +118,19 @@ namespace Coffee.OpenSesame
 
         static void SwitchPortableMode(string dllPath)
         {
-            var originPath = typeof(OpenSesameInspectorGUI).Assembly.Location;
-            var dllFullPath = Path.GetFullPath(dllPath);
-
-            if (File.Exists(dllFullPath))
+            const string originDll = "Packages/com.coffee.open-sesame-compiler/Editor/Coffee.OpenSesame.dll";
+            if (File.Exists(dllPath))
+            {
                 AssetDatabase.DeleteAsset(dllPath);
+            }
+            else if(File.Exists(originDll))
+            {
+                AssetDatabase.CopyAsset(originDll, dllPath);
+            }
             else
             {
-                Core.CopyFileIfUpdated(originPath, dllFullPath);
-                Core.CopyFileIfUpdated(originPath + ".meta", dllFullPath + ".meta");
-                EditorApplication.delayCall += () => AssetDatabase.ImportAsset(dllPath);
+                var originPath = FileUtil.GetProjectRelativePath(typeof(OpenSesameInspectorGUI).Assembly.Location);
+                AssetDatabase.CopyAsset(originPath, dllPath);
             }
         }
 
