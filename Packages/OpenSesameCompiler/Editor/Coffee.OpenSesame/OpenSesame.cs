@@ -128,7 +128,8 @@ namespace Coffee.OpenSesame
                 var scriptAssembly = compilerTasks.Keys.Cast<object>().FirstOrDefault(x => (x.Get("Filename") as string) == assemblyFilename);
 
                 // Should change compiler process for the assembly?
-                var setting = OpenSesameSetting.GetAtPath(scriptAssembly.Get("OriginPath") as string);
+                var asmdefPath = CompilationPipeline.GetAssemblyDefinitionFilePathFromAssemblyName(assemblyName);
+                var setting = OpenSesameSetting.GetAtPath(asmdefPath);
                 if (!setting.SholdChangeCompilerProcess)
                     return;
 
