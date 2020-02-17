@@ -256,7 +256,7 @@ namespace Coffee.AsmdefEx
             return tEditorCompilationInterface.Call(new[] { tCSharpLanguage }, "GetScriptAssemblyForLanguage", assemblyName);
         }
 
-        public static string[] ModifyDefines(IEnumerable<string> defines, bool openSesame, string modifySymbols)
+        public static string[] ModifyDefines(IEnumerable<string> defines, bool ignoreAccessChecks, string modifySymbols)
         {
             var symbols = modifySymbols.Split(';', ',');
             var add = symbols.Where(x => 0 < x.Length && !x.StartsWith("!"));
@@ -264,7 +264,7 @@ namespace Coffee.AsmdefEx
             return defines
                 .Union(add ?? Enumerable.Empty<string>())
                 .Except(remove ?? Enumerable.Empty<string>())
-                .Union(openSesame ? new[] { "IGNORE_ACCESS_CHECKS" } : Enumerable.Empty<string>())
+                .Union(ignoreAccessChecks ? new[] { "IGNORE_ACCESS_CHECKS" } : Enumerable.Empty<string>())
                 .Distinct()
                 .ToArray();
         }
@@ -367,7 +367,7 @@ namespace Coffee.AsmdefEx
                 }
             }
             // Revert prefix symbols for mono compiler
-            else if(isMono)
+            else if (isMono)
             {
                 text = Regex.Replace(text, "^/", "-", RegexOptions.Multiline);
             }
@@ -434,7 +434,7 @@ namespace Coffee.AsmdefEx
                 return;
 
             var asmdefPath = CompilationPipeline.GetAssemblyDefinitionFilePathFromAssemblyName(assemblyName);
-            if(Core.LogEnabled)
+            if (Core.LogEnabled)
                 UnityEngine.Debug.LogFormat("<b>Request to recompile: {0} ({1})</b>", assemblyName, asmdefPath);
             AssetDatabase.ImportAsset(asmdefPath);
         }

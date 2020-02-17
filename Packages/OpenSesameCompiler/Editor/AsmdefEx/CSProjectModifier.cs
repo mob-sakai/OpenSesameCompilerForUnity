@@ -30,7 +30,7 @@ namespace Coffee.AsmdefEx
             content = Regex.Replace(content, "<DefineConstants>(.*)</DefineConstants>", string.Format("<DefineConstants>{0}</DefineConstants>", defineText), RegexOptions.Multiline);
 
             // Use latest language version.
-            if(setting.IgnoreAccessChecks)
+            if (setting.IgnoreAccessChecks)
             {
                 content = Regex.Replace(content, "<LangVersion>.*</LangVersion>", "<LangVersion>latest</LangVersion>", RegexOptions.Multiline);
             }

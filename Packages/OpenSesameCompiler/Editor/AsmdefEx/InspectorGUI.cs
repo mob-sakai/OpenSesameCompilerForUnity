@@ -223,7 +223,7 @@ namespace Coffee.AsmdefEx
             AssetDatabase.CopyAsset(src, dst);
 
             // Add #if and #endif to all source files.
-            foreach(var file in files)
+            foreach (var file in files)
             {
                 var assetPath = file.Replace(fullDir, dir).Replace('\\', '/');
 
@@ -231,7 +231,7 @@ namespace Coffee.AsmdefEx
                 var m = Regex.Match(text, "[\r\n]+");
                 if (!m.Success)
                     continue;
-                
+
                 var nl = m.Value;
                 text = s_If + nl + text + nl + s_EndIf;
                 File.WriteAllText(file, text);
@@ -252,12 +252,12 @@ namespace Coffee.AsmdefEx
             AssetDatabase.StartAssetEditing();
 
             // Add #if and #endif to all source files.
-            foreach(var file in files)
+            foreach (var file in files)
             {
                 var assetPath = file.Replace(fullDir, dir).Replace('\\', '/');
 
                 // Delete AsmdefEx.cs
-                if(Path.GetFileName(file) == "AsmdefEx.cs")
+                if (Path.GetFileName(file) == "AsmdefEx.cs")
                 {
                     AssetDatabase.DeleteAsset(assetPath);
                     continue;
