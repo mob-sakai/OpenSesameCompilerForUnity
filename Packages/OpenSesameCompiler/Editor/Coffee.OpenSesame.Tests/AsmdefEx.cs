@@ -230,7 +230,6 @@ namespace Coffee.AsmdefEx
     [InitializeOnLoad]
     internal static class Core
     {
-        public static bool IsPortableMode { get; private set; }
         public static bool LogEnabled { get; private set; }
         public static string k_LogHeader = "<b><color=#9a4089>[AsmdefEx]</color></b> ";
 
@@ -257,7 +256,7 @@ namespace Coffee.AsmdefEx
             return tEditorCompilationInterface.Call(new[] { tCSharpLanguage }, "GetScriptAssemblyForLanguage", assemblyName);
         }
 
-        public static string[] ModifyDefines(IEnumerable<string> defines, bool openSesame, string modifySymbols)
+        public static string[] ModifyDefines(IEnumerable<string> defines, bool ignoreAccessChecks, string modifySymbols)
         {
             var symbols = modifySymbols.Split(';', ',');
             var add = symbols.Where(x => 0 < x.Length && !x.StartsWith("!"));
@@ -265,9 +264,41 @@ namespace Coffee.AsmdefEx
             return defines
                 .Union(add ?? Enumerable.Empty<string>())
                 .Except(remove ?? Enumerable.Empty<string>())
-                .Union(openSesame ? new[] { "IGNORE_ACCESS_CHECKS" } : Enumerable.Empty<string>())
+                .Union(ignoreAccessChecks ? new[] { "IGNORE_ACCESS_CHECKS" } : Enumerable.Empty<string>())
                 .Distinct()
                 .ToArray();
+        }
+
+        public static void ModifyFiles(IEnumerable<string> files, bool ignoreAccessChecks)
+        {
+            const string s_If = "#if IGNORE_ACCESS_CHECKS // [ASMDEFEX] DO NOT REMOVE THIS LINE MANUALLY.";
+            const string s_EndIf = "#endif // [ASMDEFEX] DO NOT REMOVE THIS LINE MANUALLY.";
+
+            // Add #if and #endif to all source files.
+            foreach (var file in files)
+            {
+                var text = File.ReadAllText(file);
+                Log("ModifyFiles: {0} {1} {2}", file, ignoreAccessChecks, text.Contains(s_If));
+                if (text.Contains(s_If) == ignoreAccessChecks)
+                    continue;
+
+                var m = Regex.Match(text, "[\r\n]+");
+                if (!m.Success)
+                    continue;
+
+                var nl = m.Value;
+                if (ignoreAccessChecks)
+                {
+                    text = s_If + nl + text + nl + s_EndIf;
+                }
+                else
+                {
+                    text = text.Replace(s_If + nl, "");
+                    text = text.Replace(nl + s_EndIf, "");
+                }
+                Log("ModifyFiles: Write {0} {1} {2}", file, ignoreAccessChecks, text.Contains(s_If));
+                File.WriteAllText(file, text);
+            }
         }
 
         public static void ChangeCompilerProcess(object compiler, Settings setting)
@@ -306,6 +337,14 @@ namespace Coffee.AsmdefEx
                 }
             }
 
+            // Add/remove '#if IGNORE_ACCESS_CHECKS' and '#endif' preprocessor.
+            var files = Regex.Matches(text, "^\"(.*)\"$", RegexOptions.Multiline)
+                    .Cast<Match>()
+                    .Select(x => x.Groups[1].Value)
+                    .Where(x => Path.GetExtension(x) == ".cs")
+                    .Where(x => Path.GetFileName(x) != "AsmdefEx.cs");
+            ModifyFiles(files, setting.IgnoreAccessChecks);
+
             // To access to non-publics in other assemblies, use OpenSesameCompiler instead of default csc.
             if (setting.IgnoreAccessChecks)
             {
@@ -313,6 +352,7 @@ namespace Coffee.AsmdefEx
                 text = Regex.Replace(text, "^/debug$", "/debug:portable", RegexOptions.Multiline);
                 text += "\n/preferreduilang:en-US";
 
+                // Change exe file path.
                 var cscToolExe = OpenSesameCompiler.GetInstalledPath();
                 Log("Change csc tool exe to {0}", cscToolExe);
                 if (Application.platform == RuntimePlatform.WindowsEditor)
@@ -327,7 +367,7 @@ namespace Coffee.AsmdefEx
                 }
             }
             // Revert prefix symbols for mono compiler
-            else if(isMono)
+            else if (isMono)
             {
                 text = Regex.Replace(text, "^/", "-", RegexOptions.Multiline);
             }
@@ -347,10 +387,6 @@ namespace Coffee.AsmdefEx
             {
                 string assemblyName = Path.GetFileNameWithoutExtension(name);
                 string assemblyFilename = assemblyName + ".dll";
-
-                // In portable mode, ignore other assemblies.
-                if (IsPortableMode && assemblyName != typeof(Core).Assembly.GetName().Name)
-                    return;
 
                 Type tEditorCompilationInterface = Type.GetType("UnityEditor.Scripting.ScriptCompilation.EditorCompilationInterface, UnityEditor");
                 var compilerTasks = tEditorCompilationInterface.Get("Instance").Get("compilationTask").Get("compilerTasks") as IDictionary;
@@ -374,16 +410,15 @@ namespace Coffee.AsmdefEx
 
         static Core()
         {
-            Type tCore = Type.GetType("Coffee.AsmdefEx.Core, Coffee.AsmdefEx");
-            if(tCore != null && tCore != typeof(Core))
+            var assemblyName = typeof(Core).Assembly.GetName().Name;
+            if (assemblyName == "Coffee.AsmdefEx")
                 return;
 
-            IsPortableMode = tCore == null;
             LogEnabled = PlayerSettings.GetScriptingDefineSymbolsForGroup(EditorUserBuildSettings.selectedBuildTargetGroup)
                 .Split(';', ',')
                 .Any(x => x == "ASMDEF_EX_LOG");
 
-            Log("Start watching assembly '{0}' compilation. Portable Mode = {1}", typeof(Core).Assembly.GetName().Name, IsPortableMode);
+            Log("Start watching assembly '{0}' compilation.", typeof(Core).Assembly.GetName().Name);
             CompilationPipeline.assemblyCompilationStarted += OnAssemblyCompilationStarted;
         }
     }
@@ -399,7 +434,7 @@ namespace Coffee.AsmdefEx
                 return;
 
             var asmdefPath = CompilationPipeline.GetAssemblyDefinitionFilePathFromAssemblyName(assemblyName);
-            if(Core.LogEnabled)
+            if (Core.LogEnabled)
                 UnityEngine.Debug.LogFormat("<b>Request to recompile: {0} ({1})</b>", assemblyName, asmdefPath);
             AssetDatabase.ImportAsset(asmdefPath);
         }

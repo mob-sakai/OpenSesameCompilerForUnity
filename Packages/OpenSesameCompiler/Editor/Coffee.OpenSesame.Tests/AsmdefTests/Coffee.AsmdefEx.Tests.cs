@@ -1,4 +1,4 @@
-#if IGNORE_ACCESS_CHECKS // DO NOT REMOVE THIS LINE MANUALLY.
+#if IGNORE_ACCESS_CHECKS // [ASMDEFEX] DO NOT REMOVE THIS LINE MANUALLY.
 using System.Linq;
 using NUnit.Framework;
 using UnityEditor.Scripting.ScriptCompilation;
@@ -60,4 +60,4 @@ namespace Coffee.AsmdefEx.Tests
         }
     }
 }
-#endif // IGNORE_ACCESS_CHECKS: DO NOT REMOVE THIS LINE MANUALLY.
+#endif // [ASMDEFEX] DO NOT REMOVE THIS LINE MANUALLY.
