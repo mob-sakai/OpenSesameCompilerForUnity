@@ -388,6 +388,9 @@ namespace Coffee.AsmdefEx
                 string assemblyName = Path.GetFileNameWithoutExtension(name);
                 string assemblyFilename = assemblyName + ".dll";
 
+                if (assemblyName != typeof(Core).Assembly.GetName().Name)
+                    return;
+
                 Type tEditorCompilationInterface = Type.GetType("UnityEditor.Scripting.ScriptCompilation.EditorCompilationInterface, UnityEditor");
                 var compilerTasks = tEditorCompilationInterface.Get("Instance").Get("compilationTask").Get("compilerTasks") as IDictionary;
                 var scriptAssembly = compilerTasks.Keys.Cast<object>().FirstOrDefault(x => (x.Get("Filename") as string) == assemblyFilename);
