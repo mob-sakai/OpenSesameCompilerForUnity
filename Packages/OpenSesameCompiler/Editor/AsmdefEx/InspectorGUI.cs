@@ -93,7 +93,7 @@ namespace Coffee.AsmdefEx
 
             Editor.finishedDefaultHeaderGUI += OnPostHeaderGUI;
             s_OpenSettings = EditorPrefs.GetBool("Coffee.AsmdefEx.InspectorGUI_OpenSettings", false);
-            // CompilationPipeline.assemblyCompilationFinished += OnAssemblyCompilationFinished;
+            CompilationPipeline.assemblyCompilationFinished += OnAssemblyCompilationFinished;
         }
 
         static void OnPostHeaderGUI(Editor editor)
