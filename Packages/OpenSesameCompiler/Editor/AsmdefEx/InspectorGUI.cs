@@ -22,8 +22,7 @@ namespace Coffee.AsmdefEx
         static GUIContent s_PublishText;
         static GUIContent s_HelpText;
         static bool s_OpenSettings = false;
-        static Dictionary<string, bool> s_Portables = new Dictionary<string, bool>();
-        static Dictionary<string, bool> s_Ignores = new Dictionary<string, bool>();
+        static Dictionary<string, bool> s_EnableAsmdefs = new Dictionary<string, bool>();
 
         static void OnAssemblyCompilationFinished(string name, CompilerMessage[] messages)
         {
@@ -179,18 +178,18 @@ namespace Coffee.AsmdefEx
         static bool GetExtensionEnabled(string asmdefPath)
         {
             bool enabled;
-            if (!s_Portables.TryGetValue(asmdefPath, out enabled))
+            if (!s_EnableAsmdefs.TryGetValue(asmdefPath, out enabled))
             {
                 string dst = Path.GetDirectoryName(asmdefPath) + "/AsmdefEx.cs";
                 enabled = File.Exists(dst);
-                s_Portables[asmdefPath] = enabled;
+                s_EnableAsmdefs[asmdefPath] = enabled;
             }
             return enabled;
         }
 
         static void SetExtensionEnabled(string asmdefPath, bool enabled)
         {
-            s_Portables[asmdefPath] = enabled;
+            s_EnableAsmdefs[asmdefPath] = enabled;
             string dst = Path.GetDirectoryName(asmdefPath) + "/AsmdefEx.cs";
             if (enabled)
             {
