@@ -1,5 +1,5 @@
 {
-    "name": "Coffee.OpenSesame.Dev",
+    "name": "Coffee.AsmdefEx",
     "references": [],
     "optionalUnityReferences": [],
     "includePlatforms": [
@@ -10,5 +10,7 @@
     "overrideReferences": false,
     "precompiledReferences": [],
     "autoReferenced": false,
-    "defineConstraints": []
+    "defineConstraints": [
+        "!ASMDEF_EX_DISABLE"
+    ]
 }

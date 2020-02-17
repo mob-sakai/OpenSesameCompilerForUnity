@@ -1,28 +1,26 @@
 ﻿using System.Linq;
 using UnityEditor;
 
-namespace Coffee.OpenSesame.Dev
+namespace Coffee.AsmdefEx
 {
-    class OpenSesameMenu
+    class Menus
     {
-        const string kDevelopModeText = "OpenSesame/Develop Mode";
-        const string kDevelopModeSymbol = "OPEN_SESAME_DEV";
+        const string kEnableText = "Assets/Asmdef Ex/Enable";
+        const string kDisableSymbol = "ASMDEF_EX_DISABLE";
 
-        const string kEnableLoggingText = "OpenSesame/Enable Logging";
-        const string kEnableLoggingSymbol = "OPEN_SESAME_LOG";
+        const string kEnableLoggingText = "Assets/Asmdef Ex/Enable Logging";
+        const string kEnableLoggingSymbol = "ASMDEF_EX_LOG";
 
-        const string kInstallDefaultCompilerText = "OpenSesame/Install Default Compiler";
-
-        [MenuItem(kDevelopModeText, false)]
-        static void DevelopMode()
+        [MenuItem(kEnableText, false)]
+        static void Enable()
         {
-            SwitchSymbol(kDevelopModeSymbol);
+            SwitchSymbol(kDisableSymbol);
         }
 
-        [MenuItem(kDevelopModeText, true)]
-        static bool DevelopMode_Valid()
+        [MenuItem(kEnableText, true)]
+        static bool Enable_Valid()
         {
-            Menu.SetChecked(kDevelopModeText, HasSymbol(kDevelopModeSymbol));
+            Menu.SetChecked(kEnableText, !HasSymbol(kDisableSymbol));
             return true;
         }
 

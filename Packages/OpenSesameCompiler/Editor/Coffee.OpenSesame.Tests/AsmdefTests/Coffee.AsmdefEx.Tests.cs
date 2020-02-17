@@ -1,32 +1,30 @@
+#if IGNORE_ACCESS_CHECKS // DO NOT REMOVE THIS LINE MANUALLY.
 using System.Linq;
-using System.Collections;
-using System.Collections.Generic;
 using NUnit.Framework;
-using UnityEditor;
-using UnityEngine;
-using UnityEngine.TestTools;
-using Coffee.OpenSesame;
 using UnityEditor.Scripting.ScriptCompilation;
 
-namespace OpenSesameAsmdeflTests
+namespace Coffee.AsmdefEx.Tests
 {
-    class Tests
-    {
+    class ScriptAssemblyTests
+    {   
         [Test]
         public void GetScriptAssembly()
         {
-            var assemblyName = nameof(OpenSesameAsmdeflTests);
+            var assemblyName = nameof(ScriptAssemblyTests);
             ScriptAssembly assembly = Core.GetScriptAssembly(assemblyName) as ScriptAssembly;
             Assert.IsNotNull(assembly);
             Assert.AreEqual(assembly.Filename, $"{assemblyName}.dll");
         }
+    }
 
+    class SymbolTests
+    {  
         [Test]
-        public void OpenSesameSymbol()
+        public void IgnoreAccessChecksSymbol()
         {
             var defines = new []{"SYM_A", "SYM_B", "SYM_C"};
             var modified = Core.ModifyDefines(defines, true, "");
-            var expected = defines.Union(new []{"OPEN_SESAME"});
+            var expected = defines.Union(new []{"IGNORE_ACCESS_CHECKS"});
             
             CollectionAssert.AreEqual(expected, modified);
         }
@@ -36,7 +34,7 @@ namespace OpenSesameAsmdeflTests
         {
             var defines = new []{"SYM_A", "SYM_B", "SYM_C"};
             var modified = Core.ModifyDefines(defines, true, "SYM_ADD1;SYM_ADD2");
-            var expected = new []{"SYM_A", "SYM_B", "SYM_C", "SYM_ADD1", "SYM_ADD2", "OPEN_SESAME"};
+            var expected = new []{"SYM_A", "SYM_B", "SYM_C", "SYM_ADD1", "SYM_ADD2", "IGNORE_ACCESS_CHECKS"};
             
             CollectionAssert.AreEqual(expected, modified);
         }
@@ -56,9 +54,10 @@ namespace OpenSesameAsmdeflTests
         {
             var defines = new []{"SYM_A", "SYM_B", "SYM_C"};
             var modified = Core.ModifyDefines(defines, true, "SYM_ADD1;!SYM_B");
-            var expected = new []{"SYM_A", "SYM_C", "SYM_ADD1", "OPEN_SESAME"};
+            var expected = new []{"SYM_A", "SYM_C", "SYM_ADD1", "IGNORE_ACCESS_CHECKS"};
             
             CollectionAssert.AreEqual(expected, modified);
         }
     }
 }
+#endif // IGNORE_ACCESS_CHECKS: DO NOT REMOVE THIS LINE MANUALLY.

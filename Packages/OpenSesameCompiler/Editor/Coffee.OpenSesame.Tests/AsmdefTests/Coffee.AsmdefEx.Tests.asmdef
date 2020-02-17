@@ -1,8 +1,6 @@
 {
-    "name": "OpenSesameAsmdeflTests",
-    "references": [
-        "Coffee.OpenSesame"
-    ],
+    "name": "Coffee.AsmdefEx.Tests",
+    "references": [],
     "optionalUnityReferences": [
         "TestAssemblies"
     ],
@@ -15,6 +13,6 @@
     "precompiledReferences": [],
     "autoReferenced": false,
     "defineConstraints": [
-        "OPEN_SESAME_DEV"
+        "!ASMDEF_EX_DISABLE"
     ]
 }

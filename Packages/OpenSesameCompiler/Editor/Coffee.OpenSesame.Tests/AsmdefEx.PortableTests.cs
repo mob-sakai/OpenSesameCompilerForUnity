@@ -1,3 +1,4 @@
+#if IGNORE_ACCESS_CHECKS // DO NOT REMOVE THIS LINE MANUALLY.
 using System.Collections;
 using System.Collections.Generic;
 using NUnit.Framework;
@@ -5,7 +6,7 @@ using UnityEditor;
 using UnityEngine;
 using UnityEngine.TestTools;
 
-namespace CoffeeOpenSesameTests
+namespace Coffee.AsmdefEx.PortableTests
 {
     class ScriptDefineSymbolTest
     {
@@ -110,3 +111,4 @@ namespace CoffeeOpenSesameTests
         }
     }
 }
+#endif // IGNORE_ACCESS_CHECKS: DO NOT REMOVE THIS LINE MANUALLY.

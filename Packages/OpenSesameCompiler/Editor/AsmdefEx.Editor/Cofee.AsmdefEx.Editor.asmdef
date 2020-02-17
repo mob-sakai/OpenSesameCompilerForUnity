@@ -1,18 +1,14 @@
 {
-    "name": "OpenSesameDllTests",
+    "name": "Coffee.AsmdefEx.Editor",
     "references": [],
-    "optionalUnityReferences": [
-        "TestAssemblies"
-    ],
+    "optionalUnityReferences": [],
     "includePlatforms": [
         "Editor"
     ],
     "excludePlatforms": [],
     "allowUnsafeCode": false,
-    "overrideReferences": true,
+    "overrideReferences": false,
     "precompiledReferences": [],
     "autoReferenced": false,
-    "defineConstraints": [
-        "!OPEN_SESAME_DEV"
-    ]
+    "defineConstraints": []
 }
