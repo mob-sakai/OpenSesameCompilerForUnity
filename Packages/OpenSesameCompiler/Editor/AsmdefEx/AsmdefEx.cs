@@ -236,7 +236,7 @@ namespace Coffee.AsmdefEx
         static void Log(string format, params object[] args)
         {
             if (LogEnabled)
-                LogEx(k_LogHeader + format, args);
+                LogEx(format, args);
         }
 
         public static void LogEx(string format, params object[] args)
@@ -414,6 +414,7 @@ namespace Coffee.AsmdefEx
             if (assemblyName == "Coffee.AsmdefEx")
                 return;
 
+            k_LogHeader = string.Format("<b><color=#9a4089>[AsmdefEx ({0})]</color></b> ", assemblyName);
             LogEnabled = PlayerSettings.GetScriptingDefineSymbolsForGroup(EditorUserBuildSettings.selectedBuildTargetGroup)
                 .Split(';', ',')
                 .Any(x => x == "ASMDEF_EX_LOG");
