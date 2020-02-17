@@ -16,7 +16,7 @@ namespace Coffee.AsmdefEx
     {
         static string s_AssemblyNameToPublish;
         static GUIContent s_IgnoreAccessCheckText;
-        static GUIContent s_PortableModeText;
+        static GUIContent s_EnableText;
         static GUIContent s_ModifySymbolsText;
         static GUIContent s_SettingsText;
         static GUIContent s_PublishText;
@@ -87,13 +87,14 @@ namespace Coffee.AsmdefEx
         {
             s_IgnoreAccessCheckText = new GUIContent("Ignore Access Checks", "Ignore accessibility checks on compiling to allow access to internals and privates in other assemblies.");
             s_ModifySymbolsText = new GUIContent("Modify Symbols", "When compiling this assembly, add or remove specific symbols separated with semicolons (;) or commas (,).\nSymbols starting with '!' will be removed.\n\ne.g. 'SYMBOL_TO_ADD;!SYMBOL_TO_REMOVE;...'");
-            s_PortableModeText = new GUIContent("Portable Mode", "Make this assembly available to other projects that do not have 'Open Sesame Compiler' package installed.");
-            s_SettingsText = new GUIContent("Extension", "Show extension settings for this assembly definition file.");
+            s_EnableText = new GUIContent("Enable Asmdef Extension", "Enable asmdef extension for this assembly.");
+            s_SettingsText = new GUIContent("Asmdef Extension", "Show extension settings for this assembly definition file.");
             s_PublishText = new GUIContent("Publish", "Publish this assembly as dll to the parent directory.");
             s_HelpText = new GUIContent("Help", "Open AsmdefEx help page on browser.");
 
             Editor.finishedDefaultHeaderGUI += OnPostHeaderGUI;
             s_OpenSettings = EditorPrefs.GetBool("Coffee.AsmdefEx.InspectorGUI_OpenSettings", false);
+            // CompilationPipeline.assemblyCompilationFinished += OnAssemblyCompilationFinished;
         }
 
         static void OnPostHeaderGUI(Editor editor)
@@ -136,7 +137,19 @@ namespace Coffee.AsmdefEx
             EditorGUI.indentLevel++;
             if (s_OpenSettings)
             {
+                // Enable.
+                bool enabled = GetExtensionEnabled(importer.assetPath);
+                using (var ccs = new EditorGUI.ChangeCheckScope())
+                {
+                    enabled = EditorGUILayout.ToggleLeft(s_EnableText, enabled);
+                    if (ccs.changed)
+                    {
+                        EditorApplication.delayCall += () => SetExtensionEnabled(importer.assetPath, enabled);
+                    }
+                }
+
                 // Ignore Accessibility Checks.
+                using (new EditorGUI.DisabledScope(!enabled))
                 using (var ccs = new EditorGUI.ChangeCheckScope())
                 {
                     setting.IgnoreAccessChecks = EditorGUILayout.ToggleLeft(s_IgnoreAccessCheckText, setting.IgnoreAccessChecks);
@@ -144,44 +157,11 @@ namespace Coffee.AsmdefEx
                 }
 
                 // Modify symbols.
+                using (new EditorGUI.DisabledScope(!enabled))
                 using (var ccs = new EditorGUI.ChangeCheckScope())
                 {
                     setting.ModifySymbols = EditorGUILayout.DelayedTextField(s_ModifySymbolsText, setting.ModifySymbols);
                     settingChanged |= ccs.changed;
-                }
-
-                // Portable mode.
-
-                bool isPortable, isIgnored;
-                if(!s_Portables.TryGetValue(importer.assetPath, out isPortable))
-                {
-                    var assemblyName = GetAssemblyName(importer.assetPath);
-                    var scriptAssembly = Core.GetScriptAssembly(assemblyName);
-                    s_Ignores[importer.assetPath] = scriptAssembly == null;
-
-                    if (scriptAssembly != null)
-                    {
-                        var files = scriptAssembly.Get("Files") as string[];
-                        isPortable = files.Any(x=>Path.GetFileName(x) == "AsmdefEx.cs");
-                    }
-                    s_Portables[importer.assetPath] = isPortable;
-                }
-                s_Ignores.TryGetValue(importer.assetPath, out isIgnored);
-
-                using (new EditorGUI.DisabledScope(!setting.IgnoreAccessChecks || isIgnored))
-                using (new EditorGUILayout.HorizontalScope())
-                using (var ccs = new EditorGUI.ChangeCheckScope())
-                {
-                    isPortable = EditorGUILayout.ToggleLeft(s_PortableModeText, isPortable);
-                    if (ccs.changed)
-                    {
-                        s_Portables[importer.assetPath] = isPortable;
-                        if(isPortable)
-                            EditorApplication.delayCall += () => EnablePortableMode(importer.assetPath);
-                        else
-                            EditorApplication.delayCall += () => DisablePortableMode(importer.assetPath);
-
-                    }
                 }
             }
             EditorGUI.indentLevel--;
@@ -195,6 +175,36 @@ namespace Coffee.AsmdefEx
 
         static readonly string s_If = "#if IGNORE_ACCESS_CHECKS // DO NOT REMOVE THIS LINE MANUALLY.";
         static readonly string s_EndIf = "#endif // IGNORE_ACCESS_CHECKS: DO NOT REMOVE THIS LINE MANUALLY.";
+
+        static bool GetExtensionEnabled(string asmdefPath)
+        {
+            bool enabled;
+            if (!s_Portables.TryGetValue(asmdefPath, out enabled))
+            {
+                string dst = Path.GetDirectoryName(asmdefPath) + "/AsmdefEx.cs";
+                enabled = File.Exists(dst);
+                s_Portables[asmdefPath] = enabled;
+            }
+            return enabled;
+        }
+
+        static void SetExtensionEnabled(string asmdefPath, bool enabled)
+        {
+            s_Portables[asmdefPath] = enabled;
+            string dst = Path.GetDirectoryName(asmdefPath) + "/AsmdefEx.cs";
+            if (enabled)
+            {
+                // Copy AsmdefEx.cs to assembly.
+                const string src = "Packages/com.coffee.open-sesame-compiler/Editor/AsmdefEx/AsmdefEx.cs";
+                AssetDatabase.CopyAsset(src, dst);
+            }
+            else
+            {
+                // Delete AsmdefEx.cs from assembly.
+                AssetDatabase.DeleteAsset(dst);
+            }
+        }
+
 
         static void EnablePortableMode(string asmdefPath)
         {
