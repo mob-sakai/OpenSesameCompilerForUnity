@@ -236,7 +236,7 @@ namespace Coffee.AsmdefEx
         static void Log(string format, params object[] args)
         {
             if (LogEnabled)
-                LogEx(k_LogHeader + format, args);
+                LogEx(format, args);
         }
 
         public static void LogEx(string format, params object[] args)
@@ -388,6 +388,9 @@ namespace Coffee.AsmdefEx
                 string assemblyName = Path.GetFileNameWithoutExtension(name);
                 string assemblyFilename = assemblyName + ".dll";
 
+                if (assemblyName != typeof(Core).Assembly.GetName().Name)
+                    return;
+
                 Type tEditorCompilationInterface = Type.GetType("UnityEditor.Scripting.ScriptCompilation.EditorCompilationInterface, UnityEditor");
                 var compilerTasks = tEditorCompilationInterface.Get("Instance").Get("compilationTask").Get("compilerTasks") as IDictionary;
                 var scriptAssembly = compilerTasks.Keys.Cast<object>().FirstOrDefault(x => (x.Get("Filename") as string) == assemblyFilename);
@@ -414,6 +417,7 @@ namespace Coffee.AsmdefEx
             if (assemblyName == "Coffee.AsmdefEx")
                 return;
 
+            k_LogHeader = string.Format("<b><color=#9a4089>[AsmdefEx ({0})]</color></b> ", assemblyName);
             LogEnabled = PlayerSettings.GetScriptingDefineSymbolsForGroup(EditorUserBuildSettings.selectedBuildTargetGroup)
                 .Split(';', ',')
                 .Any(x => x == "ASMDEF_EX_LOG");
