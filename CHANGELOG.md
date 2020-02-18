@@ -1,3 +1,19 @@
+# [1.0.0-preview.21](https://github.com/mob-sakai/OpenSesameCompilerForUnity/compare/v1.0.0-preview.20...v1.0.0-preview.21) (2020-02-18)
+
+
+### Bug Fixes
+
+* log format ([0a253f8](https://github.com/mob-sakai/OpenSesameCompilerForUnity/commit/0a253f8d7754a0085570ecf998781be93a882a21))
+* multiple compile issue ([3ae0425](https://github.com/mob-sakai/OpenSesameCompilerForUnity/commit/3ae042579f07357d2aafac8a96e88de477117bab))
+* publish feature ([fff7dcf](https://github.com/mob-sakai/OpenSesameCompilerForUnity/commit/fff7dcf4903c4d026a9069fe2d4641502a865b8a))
+
+
+### Features
+
+* new architecture ([ad58072](https://github.com/mob-sakai/OpenSesameCompilerForUnity/commit/ad580728dee68637d0c2d63814967e2fc964f374))
+* redesign portable mode ([6386e62](https://github.com/mob-sakai/OpenSesameCompilerForUnity/commit/6386e624b1ba2c37bacb80384d6779a484df6f8b))
+* remove portable mode ([e00ecdc](https://github.com/mob-sakai/OpenSesameCompilerForUnity/commit/e00ecdc33e7e8ce81b42c838311bf1b7d1be6382))
+
 # [1.0.0-preview.20](https://github.com/mob-sakai/OpenSesameCompilerForUnity/compare/v1.0.0-preview.19...v1.0.0-preview.20) (2020-02-10)
 
 

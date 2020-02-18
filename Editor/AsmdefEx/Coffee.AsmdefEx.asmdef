@@ -1,0 +1,16 @@
+{
+    "name": "Coffee.AsmdefEx",
+    "references": [],
+    "optionalUnityReferences": [],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": false,
+    "defineConstraints": [
+        "!ASMDEF_EX_DISABLE"
+    ]
+}
