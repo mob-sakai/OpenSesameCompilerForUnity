@@ -1,26 +1,10 @@
-# Windows
 Thumbs.db
 Desktop.ini
-
-# macOS
 .DS_Store
 
-# VS
-.vs/
-.vscode/
-obj/
-bin/
+!Samples~
+Samples.meta
 
-# NPM
-node_modules/
-
-# package
-Editor/Coffee.OpenSesame/*
-Editor/Coffee.OpenSesame.meta
-Editor/Coffee.OpenSesame.Dev/*
-Editor/Coffee.OpenSesame.Dev.meta
-Editor/Coffee.OpenSesame.Tests/*
-Editor/Coffee.OpenSesame.Tests.meta
 *.tgz
 *.tgz.meta
 .releaserc
