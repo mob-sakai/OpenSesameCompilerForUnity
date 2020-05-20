@@ -10,14 +10,15 @@ Let's say, **"Open sesame!"**
 
 ![](https://user-images.githubusercontent.com/12690315/70616819-a804bc00-1c52-11ea-8ea3-e24f94f6467d.gif)
 
-[![](https://img.shields.io/github/release/mob-sakai/OpenSesameCompilerForUnity.svg?label=latest%20version)](https://github.com/mob-sakai/OpenSesameCompilerForUnity/releases)
+[![](https://img.shields.io/npm/v/com.coffee.open-sesame-compiler?label=openupm&registry_uri=https://package.openupm.com)](https://openupm.com/packages/com.coffee.open-sesame-compiler/)
+[![](https://img.shields.io/github/v/release/mob-sakai/OpenSesameCompilerForUnity?include_prereleases)](https://github.com/mob-sakai/OpenSesameCompilerForUnity/releases)
 [![](https://img.shields.io/github/release-date/mob-sakai/OpenSesameCompilerForUnity.svg)](https://github.com/mob-sakai/OpenSesameCompilerForUnity/releases)
 ![](https://img.shields.io/badge/unity-2018.3%20or%20later-green.svg)
 [![](https://img.shields.io/github/license/mob-sakai/OpenSesameCompilerForUnity.svg)](https://github.com/mob-sakai/OpenSesameCompilerForUnity/blob/upm/LICENSE.txt)
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-orange.svg)](http://makeapullrequest.com)
 [![](https://img.shields.io/twitter/follow/mob_sakai.svg?label=Follow&style=social)](https://twitter.com/intent/follow?screen_name=mob_sakai)
 
-<< [Description](#description) | [Install](#install) | [Usage](#usage) >>
+<< [Description](#description) | [Installation](#installation) | [Usage](#usage) | [Contributing](#contributing) >>
 
 ### What's new? [See changelog ![](https://img.shields.io/github/release-date/mob-sakai/OpenSesameCompilerForUnity.svg?label=last%20updated)](https://github.com/mob-sakai/OpenSesameCompilerForUnity/blob/upm/CHANGELOG.md)
 ### Do you want to receive notifications for new releases? [Watch this repo ![](https://img.shields.io/github/watchers/mob-sakai/OpenSesameCompilerForUnity.svg?style=social&label=Watch)](https://github.com/mob-sakai/OpenSesameCompilerForUnity/subscription)
@@ -68,10 +69,24 @@ For details about `IgnoresAccessChecksToAttribute`, see
 
 
 <br><br><br><br>
-## Install
+## Installation
 
-Find `Packages/manifest.json` in your project and edit it to look like this:
-```js
+#### Requirement
+
+* Unity 2018.3 or later
+
+#### Using OpenUPM
+
+This package is available on [OpenUPM](https://openupm.com). 
+You can install it via [openupm-cli](https://github.com/openupm/openupm-cli).
+```
+openupm add com.coffee.open-sesame-compiler
+```
+
+#### Using Git
+
+Find the `manifest.json` file in the `Packages` directory in your project and edit it to look like this:
+```json
 {
   "dependencies": {
     "com.coffee.open-sesame-compiler": "https://github.com/mob-sakai/OpenSesameCompilerForUnity.git",
@@ -83,12 +98,7 @@ To update the package, change suffix `#{version}` to the target version.
 
 * e.g. `"com.coffee.open-sesame-compiler": "https://github.com/mob-sakai/OpenSesameCompilerForUnity.git#1.0.0",`
 
-Or, use [UpmGitExtension](https://github.com/mob-sakai/UpmGitExtension).
-
-
-### Requirement
-
-* Unity 2018.3 or later
+Or, use [UpmGitExtension](https://github.com/mob-sakai/UpmGitExtension) to install and update the package.
 
 
 
@@ -163,7 +173,27 @@ For more details, see [the article 1 (Japanese)](https://qiita.com/mob-sakai/ite
 <br><br><br><br>
 ## Contributing
 
-For details, see [CONTRIBUTING](https://github.com/mob-sakai/OpenSesameCompilerForUnity/blob/upm/CONTRIBUTING.md) and [CODE_OF_CONDUCT](https://github.com/mob-sakai/OpenSesameCompilerForUnity/blob/upm/CODE_OF_CONDUCT.md).
+### Issues
+
+Issues are very valuable to this project.
+
+- Ideas are a valuable source of contributions others can make
+- Problems show where this project is lacking
+- With a question you show where contributors can improve the user experience
+
+### Pull Requests
+
+Pull requests are, a great way to get your ideas into this repository.  
+See [CONTRIBUTING.md](/../../blob/develop/CONTRIBUTING.md).
+
+### Support
+
+This is an open source project that I am developing in my spare time.  
+If you like it, please support me.  
+With your support, I can spend more time on development. :)
+
+[![](https://user-images.githubusercontent.com/12690315/50731629-3b18b480-11ad-11e9-8fad-4b13f27969c1.png)](https://www.patreon.com/join/mob_sakai?)  
+[![](https://user-images.githubusercontent.com/12690315/66942881-03686280-f085-11e9-9586-fc0b6011029f.png)](https://github.com/users/mob-sakai/sponsorship)
 
 
 
@@ -177,8 +207,7 @@ For details, see [CONTRIBUTING](https://github.com/mob-sakai/OpenSesameCompilerF
 ## Author
 
 [mob-sakai](https://github.com/mob-sakai)
-[![](https://img.shields.io/twitter/follow/mob_sakai.svg?label=Follow&style=social)](https://twitter.com/intent/follow?screen_name=mob_sakai)  
-[![become_a_sponsor_on_github](https://user-images.githubusercontent.com/12690315/66942881-03686280-f085-11e9-9586-fc0b6011029f.png)](https://github.com/users/mob-sakai/sponsorship)
+[![](https://img.shields.io/twitter/follow/mob_sakai.svg?label=Follow&style=social)](https://twitter.com/intent/follow?screen_name=mob_sakai) 
 
 
 
