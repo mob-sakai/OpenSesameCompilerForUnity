@@ -1,3 +1,10 @@
+# [1.0.0-preview.22](https://github.com/mob-sakai/OpenSesameCompilerForUnity/compare/v1.0.0-preview.21...v1.0.0-preview.22) (2020-05-20)
+
+
+### Bug Fixes
+
+* update docs ([65e7fd5](https://github.com/mob-sakai/OpenSesameCompilerForUnity/commit/65e7fd57b940b31a0109b787fbdb41b60bc51cdd)), closes [#9](https://github.com/mob-sakai/OpenSesameCompilerForUnity/issues/9)
+
 # [1.0.0-preview.21](https://github.com/mob-sakai/OpenSesameCompilerForUnity/compare/v1.0.0-preview.20...v1.0.0-preview.21) (2020-02-18)
 
 
