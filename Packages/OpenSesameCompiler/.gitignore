@@ -1,8 +1,9 @@
-!*~
+Thumbs.db
+Desktop.ini
+.DS_Store
 
-# VS
-*.sln
-.vs/
-.vscode/
-obj/
-bin/
+!Samples~
+
+*.tgz
+*.tgz.meta
+.releaserc
