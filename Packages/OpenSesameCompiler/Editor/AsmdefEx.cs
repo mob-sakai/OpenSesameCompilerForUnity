@@ -135,7 +135,7 @@ namespace Coffee.AsmdefEx
 
         public static string GetInstalledPath(bool install = true)
         {
-            if (!string.IsNullOrEmpty(s_InstallPath) || !install)
+            if (!string.IsNullOrEmpty(s_InstallPath) && File.Exists(s_InstallPath) || !install)
                 return s_InstallPath;
 
             try

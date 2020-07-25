@@ -3,7 +3,7 @@ using UnityEditor;
 
 namespace Coffee.AsmdefEx
 {
-    class Menus
+    internal static class Menus
     {
         const string kEnableText = "Assets/Asmdef Ex/Enable";
         const string kDisableSymbol = "ASMDEF_EX_DISABLE";
@@ -12,6 +12,7 @@ namespace Coffee.AsmdefEx
         const string kEnableLoggingSymbol = "ASMDEF_EX_LOG";
 
         const string kDeleteCompilerText = "Assets/Asmdef Ex/Delete Compiler";
+        const string kInstallCompilerText = "Assets/Asmdef Ex/Install Compiler";
 
         [MenuItem(kEnableText, false)]
         static void Enable()
@@ -39,10 +40,16 @@ namespace Coffee.AsmdefEx
             return true;
         }
 
-        [MenuItem(kDeleteCompilerText, false, 30)]
+        [MenuItem(kInstallCompilerText, false, 30)]
+        static void InstallCompiler()
+        {
+            CustomCompiler.GetInstalledPath(true);
+        }
+
+        [MenuItem(kDeleteCompilerText, false, 31)]
         static void DeleteCompiler()
         {
-            var path = OpenSesameCompiler.GetInstalledPath();
+            var path = CustomCompiler.GetInstalledPath(false);
             if (!string.IsNullOrEmpty(path))
                 FileUtil.DeleteFileOrDirectory(path);
         }
