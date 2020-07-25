@@ -4,10 +4,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Net;
-using System.Net.Security;
 using System.Reflection;
-using System.Security.Cryptography.X509Certificates;
 using System.Text.RegularExpressions;
 using UnityEditor;
 using UnityEngine;
@@ -124,11 +121,11 @@ namespace Coffee.AsmdefEx
         }
     }
 
-    internal static class OpenSesameCompiler
+    internal static class CustomCompiler
     {
         static string s_InstallPath;
         const string k_Version = "3.4.0";
-        const string k_LogHeader = "<color=#c34062><b>[OpenSesameCompiler]</b></color> ";
+        const string k_LogHeader = "<color=#c34062><b>[CustomCompiler]</b></color> ";
 
         static void Log(string format, params object[] args)
         {
@@ -136,9 +133,9 @@ namespace Coffee.AsmdefEx
                 UnityEngine.Debug.LogFormat(k_LogHeader + format, args);
         }
 
-        public static string GetInstalledPath()
+        public static string GetInstalledPath(bool install = true)
         {
-            if (!string.IsNullOrEmpty(s_InstallPath))
+            if (!string.IsNullOrEmpty(s_InstallPath) || !install)
                 return s_InstallPath;
 
             try
@@ -176,9 +173,10 @@ namespace Coffee.AsmdefEx
 
             try
             {
+                UnityEngine.Debug.LogFormat(k_LogHeader + "Install custom compiler '{0}'", packageId);
                 bool isWindows = Application.platform == RuntimePlatform.WindowsEditor;
 
-                // Download compiler package from nuget.
+                // Download custom compiler package from nuget.
                 {
                     UnityEngine.Debug.LogFormat(k_LogHeader + "Download {0} from nuget: {1}", packageId, url);
                     EditorUtility.DisplayProgressBar("Custom Compiler Installer", string.Format("Download {0} from nuget", packageId), 0.2f);
@@ -189,7 +187,7 @@ namespace Coffee.AsmdefEx
                     ExecuteCommand(exe, args);
                 }
 
-                // Extract zip.
+                // Extract nuget package (unzip).
                 {
                     UnityEngine.Debug.LogFormat(k_LogHeader + "Extract {0} to {1} with 7z", dowloadPath, installPath);
                     EditorUtility.DisplayProgressBar("Custom Compiler Installer", string.Format("Extract {0}", dowloadPath), 0.4f);
@@ -200,6 +198,8 @@ namespace Coffee.AsmdefEx
                     string args = string.Format("x {0} -o{1}", dowloadPath, installPath);
                     ExecuteCommand(exe, args);
                 }
+
+                UnityEngine.Debug.LogFormat(k_LogHeader + "Custom compiler '{0}' has been installed in {1}.", packageId, installPath);
             }
             finally
             {
@@ -214,13 +214,14 @@ namespace Coffee.AsmdefEx
 
         static void ExecuteCommand(string exe, string args)
         {
-            UnityEngine.Debug.LogFormat(k_LogHeader + "Execute commnad: {0} {1}", exe, args);
+            Log("Execute commnad: {0} {1}", exe, args);
 
             Process p = Process.Start(exe, args);
             p.WaitForExit();
 
             if (p.ExitCode != 0)
             {
+                UnityEngine.Debug.LogErrorFormat(k_LogHeader + "Execute commnad: {0} {1}", exe, args);
                 UnityEngine.Debug.LogErrorFormat(k_LogHeader + p.StandardError.ReadToEnd());
             }
         }
@@ -344,7 +345,7 @@ namespace Coffee.AsmdefEx
                     .Where(x => Path.GetFileName(x) != "AsmdefEx.cs");
             ModifyFiles(files, setting.IgnoreAccessChecks);
 
-            // To access to non-publics in other assemblies, use OpenSesameCompiler instead of default csc.
+            // To access to non-publics in other assemblies, use custom compiler instead of default csc.
             if (setting.IgnoreAccessChecks)
             {
                 text = Regex.Replace(text, "^/langversion:\\d+$", "/langversion:latest", RegexOptions.Multiline);
@@ -352,7 +353,7 @@ namespace Coffee.AsmdefEx
                 text += "\n/preferreduilang:en-US";
 
                 // Change exe file path.
-                var cscToolExe = OpenSesameCompiler.GetInstalledPath();
+                var cscToolExe = CustomCompiler.GetInstalledPath();
                 Log("Change csc tool exe to {0}", cscToolExe);
                 if (Application.platform == RuntimePlatform.WindowsEditor)
                 {
