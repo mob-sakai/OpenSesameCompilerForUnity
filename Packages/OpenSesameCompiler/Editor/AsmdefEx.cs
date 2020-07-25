@@ -155,11 +155,12 @@ namespace Coffee.AsmdefEx
 
         static string Install(string version)
         {
+            char sep = Path.DirectorySeparatorChar;
             string packageId = "OpenSesameCompiler." + version;
             string url = "https://globalcdn.nuget.org/packages/" + packageId.ToLower() + ".nupkg";
             string dowloadPath = Path.GetTempFileName() + ".nuget";
-            string installPath = ("Library/" + packageId).Replace('/', Path.DirectorySeparatorChar);
-            string cscToolExe = (installPath + "/tools/csc.exe").Replace('/', Path.DirectorySeparatorChar);
+            string installPath = ("Library/" + packageId).Replace('/', sep);
+            string cscToolExe = (installPath + "/tools/csc.exe").Replace('/', sep);
 
             // Custom compiler is already installed.
             if (File.Exists(cscToolExe))
@@ -182,7 +183,7 @@ namespace Coffee.AsmdefEx
                     EditorUtility.DisplayProgressBar("Custom Compiler Installer", string.Format("Download {0} from nuget", packageId), 0.2f);
 
                     string exe = isWindows ? "certutil.exe" : "curl";
-                    string argsFormat = isWindows ? "-urlcache {1} \"{0}\"" : "-o {0} -L {1}";
+                    string argsFormat = isWindows ? "-urlcache -f {1} \"{0}\"" : "-o {0} -L {1}";
                     string args = string.Format(argsFormat, dowloadPath, url);
                     ExecuteCommand(exe, args);
                 }
@@ -193,13 +194,17 @@ namespace Coffee.AsmdefEx
                     EditorUtility.DisplayProgressBar("Custom Compiler Installer", string.Format("Extract {0}", dowloadPath), 0.4f);
 
                     string appPath = EditorApplication.applicationContentsPath;
-                    string exePath = isWindows ? "Tools\\7z.exe" : "Tools/7za";
-                    string exe = Path.Combine(appPath, exePath);
+                    string exePath = isWindows ? "Tools/7z.exe" : "Tools/7za";
+                    string exe = "\"" + Path.Combine(appPath, exePath).Replace('/', sep) + "\"";
                     string args = string.Format("x {0} -o{1}", dowloadPath, installPath);
                     ExecuteCommand(exe, args);
                 }
 
                 UnityEngine.Debug.LogFormat(k_LogHeader + "Custom compiler '{0}' has been installed in {1}.", packageId, installPath);
+            }
+            catch
+            {
+                throw new Exception(string.Format("Custom compiler '{0}' installation failed.", packageId));
             }
             finally
             {
@@ -214,15 +219,22 @@ namespace Coffee.AsmdefEx
 
         static void ExecuteCommand(string exe, string args)
         {
-            Log("Execute commnad: {0} {1}", exe, args);
+            UnityEngine.Debug.LogFormat(k_LogHeader + "Execute commnad: {0} {1}", exe, args);
 
-            Process p = Process.Start(exe, args);
+            Process p = Process.Start(new ProcessStartInfo()
+            {
+                FileName = exe,
+                Arguments = args,
+                CreateNoWindow = true,
+                UseShellExecute = false,
+                RedirectStandardError = true,
+            });
             p.WaitForExit();
 
             if (p.ExitCode != 0)
             {
-                UnityEngine.Debug.LogErrorFormat(k_LogHeader + "Execute commnad: {0} {1}", exe, args);
                 UnityEngine.Debug.LogErrorFormat(k_LogHeader + p.StandardError.ReadToEnd());
+                throw new Exception();
             }
         }
     }
