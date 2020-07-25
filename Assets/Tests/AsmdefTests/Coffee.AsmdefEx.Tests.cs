@@ -10,7 +10,7 @@ namespace Coffee.AsmdefEx.Tests
         [Test]
         public void GetScriptAssembly()
         {
-            var assemblyName = nameof(ScriptAssemblyTests);
+            var assemblyName = typeof(ScriptAssemblyTests).Assembly.GetName().Name;
             ScriptAssembly assembly = Core.GetScriptAssembly(assemblyName) as ScriptAssembly;
             Assert.IsNotNull(assembly);
             Assert.AreEqual(assembly.Filename, $"{assemblyName}.dll");
