@@ -172,9 +172,6 @@ namespace Coffee.AsmdefEx
             }
         }
 
-        static readonly string s_If = "#if IGNORE_ACCESS_CHECKS // DO NOT REMOVE THIS LINE MANUALLY.";
-        static readonly string s_EndIf = "#endif // IGNORE_ACCESS_CHECKS: DO NOT REMOVE THIS LINE MANUALLY.";
-
         static bool GetExtensionEnabled(string asmdefPath)
         {
             bool enabled;
@@ -202,75 +199,6 @@ namespace Coffee.AsmdefEx
                 // Delete AsmdefEx.cs from assembly.
                 AssetDatabase.DeleteAsset(dst);
             }
-        }
-
-
-        static void EnablePortableMode(string asmdefPath)
-        {
-            const string src = "Packages/com.coffee.open-sesame-compiler/Editor/AsmdefEx/AsmdefEx.cs";
-            string dst = Path.GetDirectoryName(asmdefPath) + "/AsmdefEx.cs";
-
-            var dir = Path.GetDirectoryName(asmdefPath);
-            var fullDir = Path.GetFullPath(dir);
-
-            var assemblyName = GetAssemblyName(asmdefPath);
-            var files = Core.GetScriptAssembly(assemblyName).Get("Files") as string[];
-
-            AssetDatabase.StartAssetEditing();
-
-            // Copy AsmdefEx.cs to assembly.
-            AssetDatabase.CopyAsset(src, dst);
-
-            // Add #if and #endif to all source files.
-            foreach (var file in files)
-            {
-                var assetPath = file.Replace(fullDir, dir).Replace('\\', '/');
-
-                var text = File.ReadAllText(file);
-                var m = Regex.Match(text, "[\r\n]+");
-                if (!m.Success)
-                    continue;
-
-                var nl = m.Value;
-                text = s_If + nl + text + nl + s_EndIf;
-                File.WriteAllText(file, text);
-
-                AssetDatabase.ImportAsset(assetPath);
-            }
-
-            AssetDatabase.StopAssetEditing();
-        }
-
-        static void DisablePortableMode(string asmdefPath)
-        {
-            var dir = Path.GetDirectoryName(asmdefPath);
-            var fullDir = Path.GetFullPath(dir);
-            var assemblyName = GetAssemblyName(asmdefPath);
-            var files = Core.GetScriptAssembly(assemblyName).Get("Files") as string[];
-
-            AssetDatabase.StartAssetEditing();
-
-            // Add #if and #endif to all source files.
-            foreach (var file in files)
-            {
-                var assetPath = file.Replace(fullDir, dir).Replace('\\', '/');
-
-                // Delete AsmdefEx.cs
-                if (Path.GetFileName(file) == "AsmdefEx.cs")
-                {
-                    AssetDatabase.DeleteAsset(assetPath);
-                    continue;
-                }
-
-                // Remove #if and #endif from all source files.
-                var text = File.ReadAllText(file);
-                text = Regex.Replace(text, s_If + "[\r\n]+", "");
-                text = Regex.Replace(text, "[\r\n]+" + s_EndIf, "");
-                File.WriteAllText(file, text);
-
-                AssetDatabase.ImportAsset(assetPath);
-            }
-            AssetDatabase.StopAssetEditing();
         }
 
         static string GetAssemblyName(string asmdefPath = "")
