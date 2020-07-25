@@ -11,6 +11,8 @@ namespace Coffee.AsmdefEx
         const string kEnableLoggingText = "Assets/Asmdef Ex/Enable Logging";
         const string kEnableLoggingSymbol = "ASMDEF_EX_LOG";
 
+        const string kDeleteCompilerText = "Assets/Asmdef Ex/Delete Compiler";
+
         [MenuItem(kEnableText, false)]
         static void Enable()
         {
@@ -35,6 +37,14 @@ namespace Coffee.AsmdefEx
         {
             Menu.SetChecked(kEnableLoggingText, HasSymbol(kEnableLoggingSymbol));
             return true;
+        }
+
+        [MenuItem(kDeleteCompilerText, false, 30)]
+        static void DeleteCompiler()
+        {
+            var path = OpenSesameCompiler.GetInstalledPath();
+            if (!string.IsNullOrEmpty(path))
+                FileUtil.DeleteFileOrDirectory(path);
         }
 
         static string[] GetSymbols()
