@@ -20,6 +20,7 @@ namespace Coffee.AsmdefEx
         static GUIContent s_ModifySymbolsText;
         static GUIContent s_SettingsText;
         static GUIContent s_PublishText;
+        static GUIContent s_ReloadText;
         static GUIContent s_HelpText;
         static bool s_OpenSettings = false;
         static Dictionary<string, bool> s_EnableAsmdefs = new Dictionary<string, bool>();
@@ -88,7 +89,8 @@ namespace Coffee.AsmdefEx
             s_ModifySymbolsText = new GUIContent("Modify Symbols", "When compiling this assembly, add or remove specific symbols separated with semicolons (;) or commas (,).\nSymbols starting with '!' will be removed.\n\ne.g. 'SYMBOL_TO_ADD;!SYMBOL_TO_REMOVE;...'");
             s_EnableText = new GUIContent("Enable Asmdef Extension", "Enable asmdef extension for this assembly.");
             s_SettingsText = new GUIContent("Asmdef Extension", "Show extension settings for this assembly definition file.");
-            s_PublishText = new GUIContent("Publish", "Publish this assembly as dll to the parent directory.");
+            s_PublishText = new GUIContent("Publish as dll", "Publish this assembly as dll to the parent directory.");
+            s_ReloadText = new GUIContent("Reload AsmdefEx.cs", "Reload AsmdefEx.cs for this assembly.");
             s_HelpText = new GUIContent("Help", "Open AsmdefEx help page on browser.");
 
             Editor.finishedDefaultHeaderGUI += OnPostHeaderGUI;
@@ -118,14 +120,6 @@ namespace Coffee.AsmdefEx
                         EditorPrefs.SetBool("Coffee.AsmdefEx.InspectorGUI_OpenSettings", s_OpenSettings);
                 }
 
-                // Publish assembly as a dll.
-                if (GUILayout.Button(s_PublishText, EditorStyles.miniButtonMid, GUILayout.ExpandWidth(false)))
-                {
-                    s_AssemblyNameToPublish = GetAssemblyName(importer.assetPath);
-                    Core.LogEx("<b>Request to publish the assembly as dll:</b> " + s_AssemblyNameToPublish);
-                    settingChanged = true;
-                }
-
                 // Open help.
                 if (GUILayout.Button(s_HelpText, EditorStyles.miniButtonRight, GUILayout.ExpandWidth(false)))
                 {
@@ -133,9 +127,11 @@ namespace Coffee.AsmdefEx
                 }
             }
 
-            EditorGUI.indentLevel++;
             if (s_OpenSettings)
             {
+                GUILayout.BeginVertical(EditorStyles.helpBox);
+
+
                 // Enable.
                 bool enabled = GetExtensionEnabled(importer.assetPath);
                 using (var ccs = new EditorGUI.ChangeCheckScope())
@@ -162,8 +158,35 @@ namespace Coffee.AsmdefEx
                     setting.ModifySymbols = EditorGUILayout.DelayedTextField(s_ModifySymbolsText, setting.ModifySymbols);
                     settingChanged |= ccs.changed;
                 }
+
+
+                GUILayout.Space(10);
+                using (new GUILayout.VerticalScope(EditorStyles.helpBox))
+                {
+                    // Reload AsmdefEx.cs for this assembly.
+                    using (new EditorGUI.DisabledScope(!enabled))
+                    {
+                        if (GUILayout.Button(s_ReloadText, EditorStyles.miniButton))
+                        {
+                            EditorApplication.delayCall += () =>
+                            {
+                                SetExtensionEnabled(importer.assetPath, false);
+                                SetExtensionEnabled(importer.assetPath, true);
+                            };
+                        }
+                    }
+
+                    // Publish assembly as a dll.
+                    if (GUILayout.Button(s_PublishText, EditorStyles.miniButton))
+                    {
+                        s_AssemblyNameToPublish = GetAssemblyName(importer.assetPath);
+                        Core.LogEx("<b>Request to publish the assembly as dll:</b> " + s_AssemblyNameToPublish);
+                        settingChanged = true;
+                    }
+                }
+
+                GUILayout.EndVertical();
             }
-            EditorGUI.indentLevel--;
 
             if (settingChanged)
             {
@@ -171,9 +194,6 @@ namespace Coffee.AsmdefEx
                 importer.SaveAndReimport();
             }
         }
-
-        static readonly string s_If = "#if IGNORE_ACCESS_CHECKS // DO NOT REMOVE THIS LINE MANUALLY.";
-        static readonly string s_EndIf = "#endif // IGNORE_ACCESS_CHECKS: DO NOT REMOVE THIS LINE MANUALLY.";
 
         static bool GetExtensionEnabled(string asmdefPath)
         {
@@ -194,7 +214,7 @@ namespace Coffee.AsmdefEx
             if (enabled)
             {
                 // Copy AsmdefEx.cs to assembly.
-                const string src = "Packages/com.coffee.open-sesame-compiler/Editor/AsmdefEx/AsmdefEx.cs";
+                const string src = "Packages/com.coffee.open-sesame-compiler/Editor/AsmdefEx.cs";
                 AssetDatabase.CopyAsset(src, dst);
             }
             else
@@ -202,75 +222,6 @@ namespace Coffee.AsmdefEx
                 // Delete AsmdefEx.cs from assembly.
                 AssetDatabase.DeleteAsset(dst);
             }
-        }
-
-
-        static void EnablePortableMode(string asmdefPath)
-        {
-            const string src = "Packages/com.coffee.open-sesame-compiler/Editor/AsmdefEx/AsmdefEx.cs";
-            string dst = Path.GetDirectoryName(asmdefPath) + "/AsmdefEx.cs";
-
-            var dir = Path.GetDirectoryName(asmdefPath);
-            var fullDir = Path.GetFullPath(dir);
-
-            var assemblyName = GetAssemblyName(asmdefPath);
-            var files = Core.GetScriptAssembly(assemblyName).Get("Files") as string[];
-
-            AssetDatabase.StartAssetEditing();
-
-            // Copy AsmdefEx.cs to assembly.
-            AssetDatabase.CopyAsset(src, dst);
-
-            // Add #if and #endif to all source files.
-            foreach (var file in files)
-            {
-                var assetPath = file.Replace(fullDir, dir).Replace('\\', '/');
-
-                var text = File.ReadAllText(file);
-                var m = Regex.Match(text, "[\r\n]+");
-                if (!m.Success)
-                    continue;
-
-                var nl = m.Value;
-                text = s_If + nl + text + nl + s_EndIf;
-                File.WriteAllText(file, text);
-
-                AssetDatabase.ImportAsset(assetPath);
-            }
-
-            AssetDatabase.StopAssetEditing();
-        }
-
-        static void DisablePortableMode(string asmdefPath)
-        {
-            var dir = Path.GetDirectoryName(asmdefPath);
-            var fullDir = Path.GetFullPath(dir);
-            var assemblyName = GetAssemblyName(asmdefPath);
-            var files = Core.GetScriptAssembly(assemblyName).Get("Files") as string[];
-
-            AssetDatabase.StartAssetEditing();
-
-            // Add #if and #endif to all source files.
-            foreach (var file in files)
-            {
-                var assetPath = file.Replace(fullDir, dir).Replace('\\', '/');
-
-                // Delete AsmdefEx.cs
-                if (Path.GetFileName(file) == "AsmdefEx.cs")
-                {
-                    AssetDatabase.DeleteAsset(assetPath);
-                    continue;
-                }
-
-                // Remove #if and #endif from all source files.
-                var text = File.ReadAllText(file);
-                text = Regex.Replace(text, s_If + "[\r\n]+", "");
-                text = Regex.Replace(text, "[\r\n]+" + s_EndIf, "");
-                File.WriteAllText(file, text);
-
-                AssetDatabase.ImportAsset(assetPath);
-            }
-            AssetDatabase.StopAssetEditing();
         }
 
         static string GetAssemblyName(string asmdefPath = "")

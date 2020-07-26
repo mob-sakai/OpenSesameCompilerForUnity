@@ -4,10 +4,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Net;
-using System.Net.Security;
 using System.Reflection;
-using System.Security.Cryptography.X509Certificates;
 using System.Text.RegularExpressions;
 using UnityEditor;
 using UnityEngine;
@@ -112,24 +109,23 @@ namespace Coffee.AsmdefEx
             return setting;
         }
 
-        static void GetSettingssFromJson(string json, out bool IgnoreAccessChecks, out string modifySymbols)
+        static void GetSettingssFromJson(string json, out bool ignoreAccessChecks, out string modifySymbols)
         {
-            IgnoreAccessChecks = false;
+            ignoreAccessChecks = false;
             modifySymbols = "";
             if (string.IsNullOrEmpty(json))
                 return;
 
-            IgnoreAccessChecks = Regex.Match(json, "\"IgnoreAccessChecks\":\\s*(true|false)").Groups[1].Value == "true";
+            ignoreAccessChecks = Regex.Match(json, "\"IgnoreAccessChecks\":\\s*(true|false)").Groups[1].Value == "true";
             modifySymbols = Regex.Match(json, "\"ModifySymbols\":\\s*\"([^\"]*)\"").Groups[1].Value;
         }
     }
 
-    internal static class OpenSesameCompiler
+    internal static class CustomCompiler
     {
-        static bool s_IsInstallFailed;
         static string s_InstallPath;
         const string k_Version = "3.4.0";
-        const string k_LogHeader = "<color=#c34062><b>[OpenSesameCompiler]</b></color> ";
+        const string k_LogHeader = "<color=#c34062><b>[CustomCompiler]</b></color> ";
 
         static void Log(string format, params object[] args)
         {
@@ -137,12 +133,9 @@ namespace Coffee.AsmdefEx
                 UnityEngine.Debug.LogFormat(k_LogHeader + format, args);
         }
 
-        public static string GetInstalledPath()
+        public static string GetInstalledPath(bool install = true)
         {
-            if (s_IsInstallFailed)
-                return "";
-
-            if (!string.IsNullOrEmpty(s_InstallPath))
+            if (!string.IsNullOrEmpty(s_InstallPath) && File.Exists(s_InstallPath) || !install)
                 return s_InstallPath;
 
             try
@@ -151,7 +144,6 @@ namespace Coffee.AsmdefEx
             }
             catch (Exception ex)
             {
-                s_IsInstallFailed = true;
                 UnityEngine.Debug.LogException(new Exception(k_LogHeader + ex.Message, ex.InnerException));
             }
             finally
@@ -163,67 +155,87 @@ namespace Coffee.AsmdefEx
 
         static string Install(string version)
         {
+            char sep = Path.DirectorySeparatorChar;
             string packageId = "OpenSesameCompiler." + version;
             string url = "https://globalcdn.nuget.org/packages/" + packageId.ToLower() + ".nupkg";
-            string dowloadPath = Path.GetTempFileName() + ".nuget";
-            string installPath = ("Library/" + packageId).Replace('/', Path.DirectorySeparatorChar);
-            string cscToolExe = (installPath + "/tools/csc.exe").Replace('/', Path.DirectorySeparatorChar);
+            string downloadPath = Path.GetTempFileName() + ".nuget";
+            string installPath = ("Library/" + packageId).Replace('/', sep);
+            string cscToolExe = (installPath + "/tools/csc.exe").Replace('/', sep);
 
-            // OpenSesame compiler is already installed.
+            // Custom compiler is already installed.
             if (File.Exists(cscToolExe))
             {
-                Log("{0} is already installed at {1}", packageId, cscToolExe);
+                Log("Custom compiler '{0}' is already installed at {1}", packageId, cscToolExe);
                 return cscToolExe;
             }
 
             if (Directory.Exists(installPath))
                 Directory.Delete(installPath, true);
 
-            // Download csc from nuget.
-            UnityEngine.Debug.LogFormat(k_LogHeader + "Download {0} from nuget: {1}", packageId, url);
-            EditorUtility.DisplayProgressBar("Open Sesame Installer", string.Format("Download {0} from nuget", packageId), 0.2f);
             try
             {
-                using (var client = new WebClient())
-                    client.DownloadFile(url, dowloadPath);
+                UnityEngine.Debug.LogFormat(k_LogHeader + "Install custom compiler '{0}'", packageId);
+                bool isWindows = Application.platform == RuntimePlatform.WindowsEditor;
+
+                // Download custom compiler package from nuget.
+                {
+                    UnityEngine.Debug.LogFormat(k_LogHeader + "Download {0} from nuget: {1}", packageId, url);
+                    EditorUtility.DisplayProgressBar("Custom Compiler Installer", string.Format("Download {0} from nuget", packageId), 0.2f);
+
+                    string exe = isWindows ? "certutil.exe" : "curl";
+                    string argsFormat = isWindows ? "-urlcache -f {1} \"{0}\"" : "-o {0} -L {1}";
+                    string args = string.Format(argsFormat, downloadPath, url);
+                    ExecuteCommand(exe, args);
+                }
+
+                // Extract nuget package (unzip).
+                {
+                    UnityEngine.Debug.LogFormat(k_LogHeader + "Extract {0} to {1} with 7z", downloadPath, installPath);
+                    EditorUtility.DisplayProgressBar("Custom Compiler Installer", string.Format("Extract {0}", downloadPath), 0.4f);
+
+                    string appPath = EditorApplication.applicationContentsPath;
+                    string exePath = isWindows ? "Tools/7z.exe" : "Tools/7za";
+                    string exe = Path.Combine(appPath, exePath).Replace('/', sep);
+                    string args = string.Format("x {0} -o{1}", downloadPath, installPath);
+                    ExecuteCommand(exe, args);
+                }
+
+                UnityEngine.Debug.LogFormat(k_LogHeader + "Custom compiler '{0}' has been installed in {1}.", packageId, installPath);
             }
             catch
             {
-                using (var client = new WebClient())
-                {
-                    ServicePointManager.ServerCertificateValidationCallback += OnServerCertificateValidation;
-                    client.DownloadFile(url, dowloadPath);
-                }
+                throw new Exception(string.Format("Custom compiler '{0}' installation failed.", packageId));
             }
             finally
             {
                 EditorUtility.ClearProgressBar();
-                ServicePointManager.ServerCertificateValidationCallback -= OnServerCertificateValidation;
-            }
-
-            // Extract zip.
-            string args = string.Format("x {0} -o{1}", dowloadPath, installPath);
-            string exe = Path.Combine(EditorApplication.applicationContentsPath,
-                Application.platform == RuntimePlatform.WindowsEditor ? "Tools\\7z.exe" : "Tools/7za");
-            UnityEngine.Debug.LogFormat(k_LogHeader + "Extract {0} to {1} with 7z command: {2} {3}", dowloadPath, installPath, exe, args);
-            try
-            {
-                EditorUtility.DisplayProgressBar("Open Sesame Installer", string.Format("Extract {0}", dowloadPath), 0.4f);
-            }
-            finally
-            {
-                Process.Start(exe, args).WaitForExit();
             }
 
             if (File.Exists(cscToolExe))
                 return cscToolExe;
 
-            throw new FileNotFoundException("Open Sesame compiler is not found at " + cscToolExe);
+            throw new FileNotFoundException(string.Format("Custom compiler '{0}' is not found at {1}", packageId, cscToolExe));
         }
 
-        private static bool OnServerCertificateValidation(object _, X509Certificate __, X509Chain ___, SslPolicyErrors ____)
+        static void ExecuteCommand(string exe, string args)
         {
-            return true;
+            UnityEngine.Debug.LogFormat(k_LogHeader + "Execute command: {0} {1}", exe, args);
+
+            Process p = Process.Start(new ProcessStartInfo()
+            {
+                FileName = exe,
+                Arguments = args,
+                CreateNoWindow = true,
+                UseShellExecute = false,
+                RedirectStandardError = true,
+            });
+            p.WaitForExit();
+
+            if (p.ExitCode != 0)
+            {
+                UnityEngine.Debug.LogErrorFormat(k_LogHeader + p.StandardError.ReadToEnd());
+                throw new Exception();
+            }
         }
     }
 
@@ -345,7 +357,7 @@ namespace Coffee.AsmdefEx
                     .Where(x => Path.GetFileName(x) != "AsmdefEx.cs");
             ModifyFiles(files, setting.IgnoreAccessChecks);
 
-            // To access to non-publics in other assemblies, use OpenSesameCompiler instead of default csc.
+            // To access to non-publics in other assemblies, use custom compiler instead of default csc.
             if (setting.IgnoreAccessChecks)
             {
                 text = Regex.Replace(text, "^/langversion:\\d+$", "/langversion:latest", RegexOptions.Multiline);
@@ -353,7 +365,7 @@ namespace Coffee.AsmdefEx
                 text += "\n/preferreduilang:en-US";
 
                 // Change exe file path.
-                var cscToolExe = OpenSesameCompiler.GetInstalledPath();
+                var cscToolExe = CustomCompiler.GetInstalledPath();
                 Log("Change csc tool exe to {0}", cscToolExe);
                 if (Application.platform == RuntimePlatform.WindowsEditor)
                 {
