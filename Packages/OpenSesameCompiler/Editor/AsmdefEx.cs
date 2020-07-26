@@ -195,7 +195,7 @@ namespace Coffee.AsmdefEx
 
                     string appPath = EditorApplication.applicationContentsPath;
                     string exePath = isWindows ? "Tools/7z.exe" : "Tools/7za";
-                    string exe = "\"" + Path.Combine(appPath, exePath).Replace('/', sep) + "\"";
+                    string exe = Path.Combine(appPath, exePath).Replace('/', sep);
                     string args = string.Format("x {0} -o{1}", downloadPath, installPath);
                     ExecuteCommand(exe, args);
                 }
