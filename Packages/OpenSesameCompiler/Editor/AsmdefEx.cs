@@ -109,14 +109,14 @@ namespace Coffee.AsmdefEx
             return setting;
         }
 
-        static void GetSettingssFromJson(string json, out bool IgnoreAccessChecks, out string modifySymbols)
+        static void GetSettingssFromJson(string json, out bool ignoreAccessChecks, out string modifySymbols)
         {
-            IgnoreAccessChecks = false;
+            ignoreAccessChecks = false;
             modifySymbols = "";
             if (string.IsNullOrEmpty(json))
                 return;
 
-            IgnoreAccessChecks = Regex.Match(json, "\"IgnoreAccessChecks\":\\s*(true|false)").Groups[1].Value == "true";
+            ignoreAccessChecks = Regex.Match(json, "\"IgnoreAccessChecks\":\\s*(true|false)").Groups[1].Value == "true";
             modifySymbols = Regex.Match(json, "\"ModifySymbols\":\\s*\"([^\"]*)\"").Groups[1].Value;
         }
     }
@@ -158,7 +158,7 @@ namespace Coffee.AsmdefEx
             char sep = Path.DirectorySeparatorChar;
             string packageId = "OpenSesameCompiler." + version;
             string url = "https://globalcdn.nuget.org/packages/" + packageId.ToLower() + ".nupkg";
-            string dowloadPath = Path.GetTempFileName() + ".nuget";
+            string downloadPath = Path.GetTempFileName() + ".nuget";
             string installPath = ("Library/" + packageId).Replace('/', sep);
             string cscToolExe = (installPath + "/tools/csc.exe").Replace('/', sep);
 
@@ -184,19 +184,19 @@ namespace Coffee.AsmdefEx
 
                     string exe = isWindows ? "certutil.exe" : "curl";
                     string argsFormat = isWindows ? "-urlcache -f {1} \"{0}\"" : "-o {0} -L {1}";
-                    string args = string.Format(argsFormat, dowloadPath, url);
+                    string args = string.Format(argsFormat, downloadPath, url);
                     ExecuteCommand(exe, args);
                 }
 
                 // Extract nuget package (unzip).
                 {
-                    UnityEngine.Debug.LogFormat(k_LogHeader + "Extract {0} to {1} with 7z", dowloadPath, installPath);
-                    EditorUtility.DisplayProgressBar("Custom Compiler Installer", string.Format("Extract {0}", dowloadPath), 0.4f);
+                    UnityEngine.Debug.LogFormat(k_LogHeader + "Extract {0} to {1} with 7z", downloadPath, installPath);
+                    EditorUtility.DisplayProgressBar("Custom Compiler Installer", string.Format("Extract {0}", downloadPath), 0.4f);
 
                     string appPath = EditorApplication.applicationContentsPath;
                     string exePath = isWindows ? "Tools/7z.exe" : "Tools/7za";
                     string exe = "\"" + Path.Combine(appPath, exePath).Replace('/', sep) + "\"";
-                    string args = string.Format("x {0} -o{1}", dowloadPath, installPath);
+                    string args = string.Format("x {0} -o{1}", downloadPath, installPath);
                     ExecuteCommand(exe, args);
                 }
 
@@ -219,7 +219,7 @@ namespace Coffee.AsmdefEx
 
         static void ExecuteCommand(string exe, string args)
         {
-            UnityEngine.Debug.LogFormat(k_LogHeader + "Execute commnad: {0} {1}", exe, args);
+            UnityEngine.Debug.LogFormat(k_LogHeader + "Execute command: {0} {1}", exe, args);
 
             Process p = Process.Start(new ProcessStartInfo()
             {
