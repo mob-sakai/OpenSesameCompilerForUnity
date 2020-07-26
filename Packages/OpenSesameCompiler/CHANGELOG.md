@@ -1,3 +1,20 @@
+# [1.0.0-preview.23](https://github.com/mob-sakai/OpenSesameCompilerForUnity/compare/v1.0.0-preview.22...v1.0.0-preview.23) (2020-07-26)
+
+
+### Bug Fixes
+
+* exe path ([afd3b70](https://github.com/mob-sakai/OpenSesameCompilerForUnity/commit/afd3b700a5ebd9a0901eba755e11f8c62a2b18ae))
+* fix typo ([528b821](https://github.com/mob-sakai/OpenSesameCompilerForUnity/commit/528b821f43006fb4ea5d844fd8b8ae9e94f31fd3))
+* Windows support ([2dd9086](https://github.com/mob-sakai/OpenSesameCompilerForUnity/commit/2dd90865157d21c0039aad41ad6edb28f6959d3e))
+
+
+### Features
+
+* Add button to reload AsmdefEx.cs ([cb5f05d](https://github.com/mob-sakai/OpenSesameCompilerForUnity/commit/cb5f05da28a4c0fe0c259b87134e458d30b26a44))
+* Add menu to delete compiler ([da70e3e](https://github.com/mob-sakai/OpenSesameCompilerForUnity/commit/da70e3e93fda9f98a812e7887daabfcb79bf5eef))
+* Add menu to install compiler ([5e56b46](https://github.com/mob-sakai/OpenSesameCompilerForUnity/commit/5e56b468ad434b57044e0b6a89e16f29022f0705))
+* support TLS 1.2 or later to install compiler (OS native) ([802151f](https://github.com/mob-sakai/OpenSesameCompilerForUnity/commit/802151fa0f476bba4523fa018e2f175ad1bbb613))
+
 # [1.0.0-preview.22](https://github.com/mob-sakai/OpenSesameCompilerForUnity/compare/v1.0.0-preview.21...v1.0.0-preview.22) (2020-05-20)
 
 
