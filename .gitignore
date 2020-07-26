@@ -28,3 +28,6 @@ Packages/**/package.meta
 *.tgz
 *.tgz.meta
 /demo
+Assets/Plugins.meta
+Assets/Plugins/
+.idea/
