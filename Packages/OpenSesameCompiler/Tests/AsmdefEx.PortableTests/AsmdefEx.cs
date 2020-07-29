@@ -5,6 +5,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Security.Policy;
 using System.Text.RegularExpressions;
 using UnityEditor;
 using UnityEngine;
@@ -12,9 +13,15 @@ using UnityEditor.Compilation;
 
 namespace Coffee.AsmdefEx
 {
+    internal static class PackageSettings
+    {
+        public const string PackageId = "OpenSesame.Net.Compilers.3.4.0-beta.1";
+    }
+
     internal static class ReflectionExtensions
     {
         const BindingFlags FLAGS = BindingFlags.Instance | BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic;
+
         static object Inst(this object self)
         {
             return (self is Type) ? null : self;
@@ -68,9 +75,17 @@ namespace Coffee.AsmdefEx
     {
         public bool IgnoreAccessChecks;
         public string ModifySymbols = "";
+        public string CustomCompilerPackageId = "";
 
-        public bool SholdChangeCompilerProcess { get { return IgnoreAccessChecks || !string.IsNullOrEmpty(ModifySymbols); } }
-        public bool SholdModifyDefines { get { return IgnoreAccessChecks || !string.IsNullOrEmpty(ModifySymbols); } }
+        public bool SholdChangeCompilerProcess
+        {
+            get { return IgnoreAccessChecks || !string.IsNullOrEmpty(ModifySymbols); }
+        }
+
+        public bool SholdModifyDefines
+        {
+            get { return IgnoreAccessChecks || !string.IsNullOrEmpty(ModifySymbols); }
+        }
 
         public static Settings GetAtPath(string path)
         {
@@ -91,40 +106,52 @@ namespace Coffee.AsmdefEx
             try
             {
                 var json = AssetImporter.GetAtPath(path).userData;
-                GetSettingssFromJson(json, out setting.IgnoreAccessChecks, out setting.ModifySymbols);
+                GetSettingssFromJson(json, out setting.IgnoreAccessChecks, out setting.ModifySymbols, out setting.CustomCompilerPackageId);
             }
-            catch { }
+            catch
+            {
+            }
+
             return setting;
         }
 
         public string ToJson()
         {
-            return string.Format("{{\"IgnoreAccessChecks\":{0},\"ModifySymbols\":\"{1}\"}}", IgnoreAccessChecks ? "true" : "false", ModifySymbols ?? "");
+            return string.Format("{{" +
+                                 "\"IgnoreAccessChecks\":{0}," +
+                                 "\"ModifySymbols\":\"{1}\"," +
+                                 "\"CustomCompilerPackageId\":\"{2}\"" +
+                                 "}}",
+                IgnoreAccessChecks ? "true" : "false",
+                ModifySymbols ?? "",
+                CustomCompilerPackageId ?? ""
+                );
         }
 
         public static Settings CreateFromJson(string json = "")
         {
             var setting = new Settings();
-            GetSettingssFromJson(json, out setting.IgnoreAccessChecks, out setting.ModifySymbols);
+            GetSettingssFromJson(json, out setting.IgnoreAccessChecks, out setting.ModifySymbols, out setting.CustomCompilerPackageId);
             return setting;
         }
 
-        static void GetSettingssFromJson(string json, out bool IgnoreAccessChecks, out string modifySymbols)
+        static void GetSettingssFromJson(string json, out bool ignoreAccessChecks, out string modifySymbols, out string customCompilerPackageId)
         {
-            IgnoreAccessChecks = false;
+            ignoreAccessChecks = false;
             modifySymbols = "";
+            customCompilerPackageId = "";
             if (string.IsNullOrEmpty(json))
                 return;
 
-            IgnoreAccessChecks = Regex.Match(json, "\"IgnoreAccessChecks\":\\s*(true|false)").Groups[1].Value == "true";
+            ignoreAccessChecks = Regex.Match(json, "\"IgnoreAccessChecks\":\\s*(true|false)").Groups[1].Value == "true";
             modifySymbols = Regex.Match(json, "\"ModifySymbols\":\\s*\"([^\"]*)\"").Groups[1].Value;
+            customCompilerPackageId = Regex.Match(json, "\"CustomCompilerPackageId\":\\s*\"([^\"]*)\"").Groups[1].Value;
         }
     }
 
     internal static class CustomCompiler
     {
         static string s_InstallPath;
-        const string k_Version = "3.4.0";
         const string k_LogHeader = "<color=#c34062><b>[CustomCompiler]</b></color> ";
 
         static void Log(string format, params object[] args)
@@ -133,14 +160,15 @@ namespace Coffee.AsmdefEx
                 UnityEngine.Debug.LogFormat(k_LogHeader + format, args);
         }
 
-        public static string GetInstalledPath(bool install = true)
+        public static string GetInstalledPath(string packageId = "")
         {
-            if (!string.IsNullOrEmpty(s_InstallPath) || !install)
+            if (!string.IsNullOrEmpty(s_InstallPath) && File.Exists(s_InstallPath))
                 return s_InstallPath;
 
             try
             {
-                s_InstallPath = Install(k_Version);
+                packageId = string.IsNullOrEmpty(packageId) ? PackageSettings.PackageId : packageId;
+                s_InstallPath = Install(packageId);
             }
             catch (Exception ex)
             {
@@ -150,16 +178,17 @@ namespace Coffee.AsmdefEx
             {
                 EditorUtility.ClearProgressBar();
             }
+
             return s_InstallPath;
         }
 
-        static string Install(string version)
+        static string Install(string packageId)
         {
-            string packageId = "OpenSesameCompiler." + version;
+            char sep = Path.DirectorySeparatorChar;
             string url = "https://globalcdn.nuget.org/packages/" + packageId.ToLower() + ".nupkg";
-            string dowloadPath = Path.GetTempFileName() + ".nuget";
-            string installPath = ("Library/" + packageId).Replace('/', Path.DirectorySeparatorChar);
-            string cscToolExe = (installPath + "/tools/csc.exe").Replace('/', Path.DirectorySeparatorChar);
+            string downloadPath = Path.GetTempFileName() + ".nuget";
+            string installPath = ("Library/" + packageId).Replace('/', sep);
+            string cscToolExe = (installPath + "/tools/csc.exe").Replace('/', sep);
 
             // Custom compiler is already installed.
             if (File.Exists(cscToolExe))
@@ -182,24 +211,28 @@ namespace Coffee.AsmdefEx
                     EditorUtility.DisplayProgressBar("Custom Compiler Installer", string.Format("Download {0} from nuget", packageId), 0.2f);
 
                     string exe = isWindows ? "certutil.exe" : "curl";
-                    string argsFormat = isWindows ? "-urlcache {1} \"{0}\"" : "-o {0} -L {1}";
-                    string args = string.Format(argsFormat, dowloadPath, url);
+                    string argsFormat = isWindows ? "-urlcache -f {1} \"{0}\"" : "-o {0} -L {1}";
+                    string args = string.Format(argsFormat, downloadPath, url);
                     ExecuteCommand(exe, args);
                 }
 
                 // Extract nuget package (unzip).
                 {
-                    UnityEngine.Debug.LogFormat(k_LogHeader + "Extract {0} to {1} with 7z", dowloadPath, installPath);
-                    EditorUtility.DisplayProgressBar("Custom Compiler Installer", string.Format("Extract {0}", dowloadPath), 0.4f);
+                    UnityEngine.Debug.LogFormat(k_LogHeader + "Extract {0} to {1} with 7z", downloadPath, installPath);
+                    EditorUtility.DisplayProgressBar("Custom Compiler Installer", string.Format("Extract {0}", downloadPath), 0.4f);
 
                     string appPath = EditorApplication.applicationContentsPath;
-                    string exePath = isWindows ? "Tools\\7z.exe" : "Tools/7za";
-                    string exe = Path.Combine(appPath, exePath);
-                    string args = string.Format("x {0} -o{1}", dowloadPath, installPath);
+                    string exePath = isWindows ? "Tools/7z.exe" : "Tools/7za";
+                    string exe = Path.Combine(appPath, exePath).Replace('/', sep);
+                    string args = string.Format("x {0} -o{1}", downloadPath, installPath);
                     ExecuteCommand(exe, args);
                 }
 
                 UnityEngine.Debug.LogFormat(k_LogHeader + "Custom compiler '{0}' has been installed in {1}.", packageId, installPath);
+            }
+            catch
+            {
+                throw new Exception(string.Format("Custom compiler '{0}' installation failed.", packageId));
             }
             finally
             {
@@ -214,15 +247,22 @@ namespace Coffee.AsmdefEx
 
         static void ExecuteCommand(string exe, string args)
         {
-            Log("Execute commnad: {0} {1}", exe, args);
+            UnityEngine.Debug.LogFormat(k_LogHeader + "Execute command: {0} {1}", exe, args);
 
-            Process p = Process.Start(exe, args);
+            Process p = Process.Start(new ProcessStartInfo()
+            {
+                FileName = exe,
+                Arguments = args,
+                CreateNoWindow = true,
+                UseShellExecute = false,
+                RedirectStandardError = true,
+            });
             p.WaitForExit();
 
             if (p.ExitCode != 0)
             {
-                UnityEngine.Debug.LogErrorFormat(k_LogHeader + "Execute commnad: {0} {1}", exe, args);
                 UnityEngine.Debug.LogErrorFormat(k_LogHeader + p.StandardError.ReadToEnd());
+                throw new Exception();
             }
         }
     }
@@ -253,7 +293,7 @@ namespace Coffee.AsmdefEx
         {
             Type tEditorCompilationInterface = Type.GetType("UnityEditor.Scripting.ScriptCompilation.EditorCompilationInterface, UnityEditor");
             Type tCSharpLanguage = Type.GetType("UnityEditor.Scripting.Compilers.CSharpLanguage, UnityEditor");
-            return tEditorCompilationInterface.Call(new[] { tCSharpLanguage }, "GetScriptAssemblyForLanguage", assemblyName);
+            return tEditorCompilationInterface.Call(new[] {tCSharpLanguage}, "GetScriptAssemblyForLanguage", assemblyName);
         }
 
         public static string[] ModifyDefines(IEnumerable<string> defines, bool ignoreAccessChecks, string modifySymbols)
@@ -264,7 +304,7 @@ namespace Coffee.AsmdefEx
             return defines
                 .Union(add ?? Enumerable.Empty<string>())
                 .Except(remove ?? Enumerable.Empty<string>())
-                .Union(ignoreAccessChecks ? new[] { "IGNORE_ACCESS_CHECKS" } : Enumerable.Empty<string>())
+                .Union(ignoreAccessChecks ? new[] {"IGNORE_ACCESS_CHECKS"} : Enumerable.Empty<string>())
                 .Distinct()
                 .ToArray();
         }
@@ -296,6 +336,7 @@ namespace Coffee.AsmdefEx
                     text = text.Replace(s_If + nl, "");
                     text = text.Replace(nl + s_EndIf, "");
                 }
+
                 Log("ModifyFiles: Write {0} {1} {2}", file, ignoreAccessChecks, text.Contains(s_If));
                 File.WriteAllText(file, text);
             }
@@ -327,8 +368,8 @@ namespace Coffee.AsmdefEx
             {
                 Log("Modify scripting define symbols: {0}", responseFile);
                 var defines = Regex.Matches(text, "^/define:(.*)$", RegexOptions.Multiline)
-                        .Cast<Match>()
-                        .Select(x => x.Groups[1].Value);
+                    .Cast<Match>()
+                    .Select(x => x.Groups[1].Value);
 
                 text = Regex.Replace(text, "[\r\n]+/define:[^\r\n]+", "");
                 foreach (var d in ModifyDefines(defines, setting.IgnoreAccessChecks, setting.ModifySymbols))
@@ -339,10 +380,10 @@ namespace Coffee.AsmdefEx
 
             // Add/remove '#if IGNORE_ACCESS_CHECKS' and '#endif' preprocessor.
             var files = Regex.Matches(text, "^\"(.*)\"$", RegexOptions.Multiline)
-                    .Cast<Match>()
-                    .Select(x => x.Groups[1].Value)
-                    .Where(x => Path.GetExtension(x) == ".cs")
-                    .Where(x => Path.GetFileName(x) != "AsmdefEx.cs");
+                .Cast<Match>()
+                .Select(x => x.Groups[1].Value)
+                .Where(x => Path.GetExtension(x) == ".cs")
+                .Where(x => Path.GetFileName(x) != "AsmdefEx.cs");
             ModifyFiles(files, setting.IgnoreAccessChecks);
 
             // To access to non-publics in other assemblies, use custom compiler instead of default csc.
@@ -353,7 +394,7 @@ namespace Coffee.AsmdefEx
                 text += "\n/preferreduilang:en-US";
 
                 // Change exe file path.
-                var cscToolExe = CustomCompiler.GetInstalledPath();
+                var cscToolExe = CustomCompiler.GetInstalledPath(setting.CustomCompilerPackageId);
                 Log("Change csc tool exe to {0}", cscToolExe);
                 if (Application.platform == RuntimePlatform.WindowsEditor)
                 {
