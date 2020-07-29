@@ -309,6 +309,7 @@ namespace Coffee.AsmdefEx
                 .Union(add ?? Enumerable.Empty<string>())
                 .Except(remove ?? Enumerable.Empty<string>())
                 .Union(ignoreAccessChecks ? new[] {"IGNORE_ACCESS_CHECKS"} : Enumerable.Empty<string>())
+                .Union(new[] {"ASMDEF_EX"})
                 .Distinct()
                 .ToArray();
         }
@@ -368,7 +369,6 @@ namespace Coffee.AsmdefEx
             text = Regex.Replace(text, "^-", "/", RegexOptions.Multiline);
 
             // Modify scripting define symbols.
-            if (setting.SholdModifyDefines)
             {
                 Log("Modify scripting define symbols: {0}", responseFile);
                 var defines = Regex.Matches(text, "^/define:(.*)$", RegexOptions.Multiline)
@@ -472,13 +472,13 @@ namespace Coffee.AsmdefEx
         }
     }
 
-#if !IGNORE_ACCESS_CHECKS
     [InitializeOnLoad]
     internal class RecompileRequest
     {
         static RecompileRequest()
         {
             var assemblyName = typeof(RecompileRequest).Assembly.GetName().Name;
+#if !ASMDEF_EX
             if (assemblyName == "Coffee.AsmdefEx")
                 return;
 
@@ -486,7 +486,7 @@ namespace Coffee.AsmdefEx
             if (Core.LogEnabled)
                 UnityEngine.Debug.LogFormat("<b>Request to recompile: {0} ({1})</b>", assemblyName, asmdefPath);
             AssetDatabase.ImportAsset(asmdefPath);
+#endif
         }
     }
-#endif
 }
