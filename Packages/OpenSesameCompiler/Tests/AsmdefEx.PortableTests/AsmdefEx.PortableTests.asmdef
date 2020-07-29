@@ -1,6 +1,8 @@
 {
     "name": "Coffee.AsmdefEx.PortableTests",
-    "references": [],
+    "references": [
+        "Coffee.AsmdefEx.InternalLibrary"
+    ],
     "optionalUnityReferences": [
         "TestAssemblies"
     ],

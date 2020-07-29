@@ -5,6 +5,7 @@ using NUnit.Framework;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.TestTools;
+using Coffee.AsmdefEx.InternalLibrary;
 
 namespace Coffee.AsmdefEx.PortableTests
 {
@@ -40,6 +41,45 @@ namespace Coffee.AsmdefEx.PortableTests
             list.Add(1);
             list.Clear();
             UnityEngine.UI.ListPool<int>.Release(list);
+        }
+    }
+
+    public class AnotherInternalLibrary
+    {
+        [Test]
+        public void InternalClass_privateStringField()
+        {
+            Assert.AreEqual(new InternalClass().privateStringField, "privateStringField");
+        }
+
+        [Test]
+        public void InternalClass_PublicMethod()
+        {
+            Assert.AreEqual(new InternalClass().PublicMethod(), "PublicMethod");
+        }
+
+        [Test]
+        public void InternalClass_PrivateMethod()
+        {
+            Assert.AreEqual(new InternalClass().PrivateMethod(), "PrivateMethod");
+        }
+
+        [Test]
+        public void InternalClass_privateStaticStringField()
+        {
+            Assert.AreEqual(InternalClass.privateStaticStringField, "privateStaticStringField");
+        }
+
+        [Test]
+        public void InternalClass_PublicStaticMethod()
+        {
+            Assert.AreEqual(InternalClass.PublicStaticMethod(), "PublicStaticMethod");
+        }
+
+        [Test]
+        public void InternalClass_PrivateStaticMethod()
+        {
+            Assert.AreEqual(InternalClass.PrivateStaticMethod(), "PrivateStaticMethod");
         }
     }
 
@@ -87,10 +127,7 @@ namespace Coffee.AsmdefEx.PortableTests
         public void PrivateEvent()
         {
             var tracker = new EditorGUIUtility.EditorLockTracker();
-            tracker.lockStateChanged.AddListener(locked =>
-            {
-                Debug.Log($"locked: {locked}");
-            });
+            tracker.lockStateChanged.AddListener(locked => { Debug.Log($"locked: {locked}"); });
             LogAssert.Expect(LogType.Log, "locked: True");
             tracker.isLocked = true;
         }
