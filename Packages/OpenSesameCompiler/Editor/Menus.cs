@@ -43,13 +43,13 @@ namespace Coffee.AsmdefEx
         [MenuItem(kInstallCompilerText, false, 30)]
         static void InstallCompiler()
         {
-            CustomCompiler.GetInstalledPath(true);
+            CustomCompiler.GetInstalledPath();
         }
 
         [MenuItem(kDeleteCompilerText, false, 31)]
         static void DeleteCompiler()
         {
-            var path = CustomCompiler.GetInstalledPath(false);
+            var path = CustomCompiler.GetInstalledPath();
             if (!string.IsNullOrEmpty(path))
                 FileUtil.DeleteFileOrDirectory(path);
         }

@@ -18,6 +18,7 @@ namespace Coffee.AsmdefEx
         static GUIContent s_IgnoreAccessCheckText;
         static GUIContent s_EnableText;
         static GUIContent s_ModifySymbolsText;
+        static GUIContent s_CustomCompilerText;
         static GUIContent s_SettingsText;
         static GUIContent s_PublishText;
         static GUIContent s_ReloadText;
@@ -87,6 +88,7 @@ namespace Coffee.AsmdefEx
         {
             s_IgnoreAccessCheckText = new GUIContent("Ignore Access Checks", "Ignore accessibility checks on compiling to allow access to internals and privates in other assemblies.");
             s_ModifySymbolsText = new GUIContent("Modify Symbols", "When compiling this assembly, add or remove specific symbols separated with semicolons (;) or commas (,).\nSymbols starting with '!' will be removed.\n\ne.g. 'SYMBOL_TO_ADD;!SYMBOL_TO_REMOVE;...'");
+            s_CustomCompilerText = new GUIContent("Custom Compiler", "When compiling this assembly, use custom compiler package.\n\ndefault: 'OpenSesame.Net.Compilers." + PackageSettings.PackageId +"'");
             s_EnableText = new GUIContent("Enable Asmdef Extension", "Enable asmdef extension for this assembly.");
             s_SettingsText = new GUIContent("Asmdef Extension", "Show extension settings for this assembly definition file.");
             s_PublishText = new GUIContent("Publish as dll", "Publish this assembly as dll to the parent directory.");
@@ -159,6 +161,13 @@ namespace Coffee.AsmdefEx
                     settingChanged |= ccs.changed;
                 }
 
+                // Custom compiler.
+                using (new EditorGUI.DisabledScope(!enabled))
+                using (var ccs = new EditorGUI.ChangeCheckScope())
+                {
+                    setting.CustomCompiler = EditorGUILayout.DelayedTextField(s_CustomCompilerText, setting.CustomCompiler);
+                    settingChanged |= ccs.changed;
+                }
 
                 GUILayout.Space(10);
                 using (new GUILayout.VerticalScope(EditorStyles.helpBox))
