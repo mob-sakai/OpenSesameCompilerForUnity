@@ -139,7 +139,7 @@ namespace Coffee.AsmdefEx
                 using (var ccs = new EditorGUI.ChangeCheckScope())
                 {
                     enabled = EditorGUILayout.ToggleLeft(s_EnableText, enabled);
-                    if (ccs.changed)
+                    if (GetAssemblyName(importer.assetPath) != "Coffee.AsmdefEx" && ccs.changed)
                     {
                         EditorApplication.delayCall += () => SetExtensionEnabled(importer.assetPath, enabled);
                     }
