@@ -20,6 +20,7 @@ namespace Coffee.AsmdefEx
     internal static class ReflectionExtensions
     {
         const BindingFlags FLAGS = BindingFlags.Instance | BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic;
+
         static object Inst(this object self)
         {
             return (self is Type) ? null : self;
@@ -111,7 +112,10 @@ namespace Coffee.AsmdefEx
                 var json = AssetImporter.GetAtPath(path).userData;
                 GetSettingssFromJson(json, out setting.IgnoreAccessChecks, out setting.ModifySymbols, out setting.CustomCompiler);
             }
-            catch { }
+            catch
+            {
+            }
+
             return setting;
         }
 
@@ -178,6 +182,7 @@ namespace Coffee.AsmdefEx
             {
                 EditorUtility.ClearProgressBar();
             }
+
             return s_InstallPath;
         }
 
@@ -292,7 +297,7 @@ namespace Coffee.AsmdefEx
         {
             Type tEditorCompilationInterface = Type.GetType("UnityEditor.Scripting.ScriptCompilation.EditorCompilationInterface, UnityEditor");
             Type tCSharpLanguage = Type.GetType("UnityEditor.Scripting.Compilers.CSharpLanguage, UnityEditor");
-            return tEditorCompilationInterface.Call(new[] { tCSharpLanguage }, "GetScriptAssemblyForLanguage", assemblyName);
+            return tEditorCompilationInterface.Call(new[] {tCSharpLanguage}, "GetScriptAssemblyForLanguage", assemblyName);
         }
 
         public static string[] ModifyDefines(IEnumerable<string> defines, bool ignoreAccessChecks, string modifySymbols)
@@ -303,7 +308,7 @@ namespace Coffee.AsmdefEx
             return defines
                 .Union(add ?? Enumerable.Empty<string>())
                 .Except(remove ?? Enumerable.Empty<string>())
-                .Union(ignoreAccessChecks ? new[] { "IGNORE_ACCESS_CHECKS" } : Enumerable.Empty<string>())
+                .Union(ignoreAccessChecks ? new[] {"IGNORE_ACCESS_CHECKS"} : Enumerable.Empty<string>())
                 .Distinct()
                 .ToArray();
         }
@@ -335,6 +340,7 @@ namespace Coffee.AsmdefEx
                     text = text.Replace(s_If + nl, "");
                     text = text.Replace(nl + s_EndIf, "");
                 }
+
                 Log("ModifyFiles: Write {0} {1} {2}", file, ignoreAccessChecks, text.Contains(s_If));
                 File.WriteAllText(file, text);
             }
@@ -366,8 +372,8 @@ namespace Coffee.AsmdefEx
             {
                 Log("Modify scripting define symbols: {0}", responseFile);
                 var defines = Regex.Matches(text, "^/define:(.*)$", RegexOptions.Multiline)
-                        .Cast<Match>()
-                        .Select(x => x.Groups[1].Value);
+                    .Cast<Match>()
+                    .Select(x => x.Groups[1].Value);
 
                 text = Regex.Replace(text, "[\r\n]+/define:[^\r\n]+", "");
                 foreach (var d in ModifyDefines(defines, setting.IgnoreAccessChecks, setting.ModifySymbols))
@@ -378,10 +384,10 @@ namespace Coffee.AsmdefEx
 
             // Add/remove '#if IGNORE_ACCESS_CHECKS' and '#endif' preprocessor.
             var files = Regex.Matches(text, "^\"(.*)\"$", RegexOptions.Multiline)
-                    .Cast<Match>()
-                    .Select(x => x.Groups[1].Value)
-                    .Where(x => Path.GetExtension(x) == ".cs")
-                    .Where(x => Path.GetFileName(x) != "AsmdefEx.cs");
+                .Cast<Match>()
+                .Select(x => x.Groups[1].Value)
+                .Where(x => Path.GetExtension(x) == ".cs")
+                .Where(x => Path.GetFileName(x) != "AsmdefEx.cs");
             ModifyFiles(files, setting.IgnoreAccessChecks);
 
             // To access to non-publics in other assemblies, use custom compiler instead of default csc.

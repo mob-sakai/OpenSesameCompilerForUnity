@@ -74,7 +74,7 @@ namespace Coffee.AsmdefEx
             var symbols = GetSymbols();
             SetSymbols(symbols.Any(x => x == symbol)
                 ? symbols.Where(x => x != symbol).ToArray()
-                : symbols.Concat(new[] { symbol }).ToArray()
+                : symbols.Concat(new[] {symbol}).ToArray()
             );
         }
     }
