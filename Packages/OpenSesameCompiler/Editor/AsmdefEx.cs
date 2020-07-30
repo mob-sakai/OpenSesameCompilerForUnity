@@ -79,12 +79,7 @@ namespace Coffee.AsmdefEx
 
         public bool SholdChangeCompilerProcess
         {
-            get { return IgnoreAccessChecks || !string.IsNullOrEmpty(ModifySymbols); }
-        }
-
-        public bool SholdModifyDefines
-        {
-            get { return IgnoreAccessChecks || !string.IsNullOrEmpty(ModifySymbols); }
+            get { return IgnoreAccessChecks || !string.IsNullOrEmpty(ModifySymbols) || !string.IsNullOrEmpty(CustomCompiler); }
         }
 
         public bool UseCustomCompiler

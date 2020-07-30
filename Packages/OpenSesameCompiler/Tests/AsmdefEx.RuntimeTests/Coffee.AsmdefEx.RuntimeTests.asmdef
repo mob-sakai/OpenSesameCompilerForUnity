@@ -1,20 +1,16 @@
 {
-    "name": "Coffee.AsmdefEx.PortableTests",
+    "name": "Coffee.AsmdefEx.RuntimeTests",
     "references": [
-        "Coffee.AsmdefEx.InternalLibrary"
+        "Coffee.AsmdefEx.RuntimeTests.InternalLibrary"
     ],
     "optionalUnityReferences": [
         "TestAssemblies"
     ],
-    "includePlatforms": [
-        "Editor"
-    ],
+    "includePlatforms": [],
     "excludePlatforms": [],
     "allowUnsafeCode": false,
     "overrideReferences": false,
     "precompiledReferences": [],
     "autoReferenced": false,
-    "defineConstraints": [
-        "!ASMDEF_EX_DISABLE"
-    ]
+    "defineConstraints": []
 }

@@ -1,4 +1,4 @@
-namespace Coffee.AsmdefEx.InternalLibrary
+namespace Coffee.AsmdefEx.RuntimeTests.InternalLibrary
 {
     /// <summary>
     /// Internal Class

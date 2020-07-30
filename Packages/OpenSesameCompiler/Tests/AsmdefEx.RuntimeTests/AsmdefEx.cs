@@ -74,13 +74,17 @@ namespace Coffee.AsmdefEx
     internal class Settings
     {
         public bool IgnoreAccessChecks;
-        public bool GenerateXmlDoc;
         public string ModifySymbols = "";
         public string CustomCompiler = "";
 
         public bool SholdChangeCompilerProcess
         {
-            get { return IgnoreAccessChecks || GenerateXmlDoc || !string.IsNullOrEmpty(ModifySymbols) || !string.IsNullOrEmpty(CustomCompiler); }
+            get { return IgnoreAccessChecks || !string.IsNullOrEmpty(ModifySymbols) || !string.IsNullOrEmpty(CustomCompiler); }
+        }
+
+        public bool UseCustomCompiler
+        {
+            get { return IgnoreAccessChecks || !string.IsNullOrEmpty(CustomCompiler); }
         }
 
         public static Settings GetAtPath(string path)
@@ -102,7 +106,7 @@ namespace Coffee.AsmdefEx
             try
             {
                 var json = AssetImporter.GetAtPath(path).userData;
-                GetSettingssFromJson(json, out setting.IgnoreAccessChecks, out setting.ModifySymbols, out setting.CustomCompiler, out setting.GenerateXmlDoc);
+                GetSettingssFromJson(json, out setting.IgnoreAccessChecks, out setting.ModifySymbols, out setting.CustomCompiler);
             }
             catch
             {
@@ -116,37 +120,32 @@ namespace Coffee.AsmdefEx
             return string.Format("{{" +
                                  "\"IgnoreAccessChecks\":{0}," +
                                  "\"ModifySymbols\":\"{1}\"," +
-                                 "\"CustomCompiler\":\"{2}\"," +
-                                 "\"GenerateXmlDoc\":{3}" +
+                                 "\"CustomCompiler\":\"{2}\"" +
                                  "}}",
                 IgnoreAccessChecks ? "true" : "false",
                 ModifySymbols ?? "",
-                CustomCompiler ?? "",
-                GenerateXmlDoc ? "true" : "false"
+                CustomCompiler ?? ""
             );
         }
 
         public static Settings CreateFromJson(string json = "")
         {
             var setting = new Settings();
-            GetSettingssFromJson(json, out setting.IgnoreAccessChecks, out setting.ModifySymbols, out setting.CustomCompiler, out setting.GenerateXmlDoc);
+            GetSettingssFromJson(json, out setting.IgnoreAccessChecks, out setting.ModifySymbols, out setting.CustomCompiler);
             return setting;
         }
 
-        static void GetSettingssFromJson(string json, out bool ignoreAccessChecks, out string modifySymbols, out string customCompiler, out bool generateXmlDoc)
+        static void GetSettingssFromJson(string json, out bool ignoreAccessChecks, out string modifySymbols, out string customCompiler)
         {
             ignoreAccessChecks = false;
             modifySymbols = "";
             customCompiler = "";
-            generateXmlDoc = false;
-
             if (string.IsNullOrEmpty(json))
                 return;
 
             ignoreAccessChecks = Regex.Match(json, "\"IgnoreAccessChecks\":\\s*(true|false)").Groups[1].Value == "true";
             modifySymbols = Regex.Match(json, "\"ModifySymbols\":\\s*\"([^\"]*)\"").Groups[1].Value;
             customCompiler = Regex.Match(json, "\"CustomCompiler\":\\s*\"([^\"]*)\"").Groups[1].Value;
-            generateXmlDoc = Regex.Match(json, "\"GenerateXmlDoc\":\\s*(true|false)").Groups[1].Value == "true";
         }
     }
 
@@ -364,7 +363,6 @@ namespace Coffee.AsmdefEx
             var text = File.ReadAllText(responseFile);
             text = Regex.Replace(text, "[\r\n]+", "\n");
             text = Regex.Replace(text, "^-", "/", RegexOptions.Multiline);
-            string assemblyName = Regex.Match(text, "/out:\"Temp[\\/](.*).dll\"").Groups[1].Value;
 
             // Modify scripting define symbols.
             {
@@ -380,20 +378,6 @@ namespace Coffee.AsmdefEx
                 }
             }
 
-            // Generate XML document.
-            string xmlPath = "Temp/docs/" + assemblyName + ".xml";
-            if (setting.GenerateXmlDoc)
-            {
-                if (!Directory.Exists("Temp/docs"))
-                    Directory.CreateDirectory("Temp/docs");
-
-                text += "\n/doc:\"" + xmlPath.Replace('/', Path.DirectorySeparatorChar) + "\"";
-            }
-            else if (File.Exists(xmlPath))
-            {
-                File.Delete(xmlPath);
-            }
-
             // Add/remove '#if IGNORE_ACCESS_CHECKS' and '#endif' preprocessor.
             var files = Regex.Matches(text, "^\"(.*)\"$", RegexOptions.Multiline)
                 .Cast<Match>()
@@ -403,7 +387,7 @@ namespace Coffee.AsmdefEx
             ModifyFiles(files, setting.IgnoreAccessChecks);
 
             // To access to non-publics in other assemblies, use custom compiler instead of default csc.
-            if (setting.IgnoreAccessChecks)
+            if (setting.UseCustomCompiler)
             {
                 text = Regex.Replace(text, "^/langversion:\\d+$", "/langversion:latest", RegexOptions.Multiline);
                 text = Regex.Replace(text, "^/debug$", "/debug:portable", RegexOptions.Multiline);
@@ -484,29 +468,28 @@ namespace Coffee.AsmdefEx
         }
     }
 
+#if !ASMDEF_EX
     [InitializeOnLoad]
     internal class RecompileRequest
     {
         static RecompileRequest()
         {
             var assemblyName = typeof(RecompileRequest).Assembly.GetName().Name;
-
-            // Copy the xml doc for the assembly, if it exists.
-            string src = "Temp/docs/" + assemblyName + ".xml";
-            string dst = "Library/ScriptAssemblies/" + assemblyName + ".xml";
-            if (File.Exists(src))
-                File.Copy(src, dst, true);
-
-#if !ASMDEF_EX
             if (assemblyName == "Coffee.AsmdefEx")
                 return;
 
+            // Should change compiler process for the assembly?
             var asmdefPath = CompilationPipeline.GetAssemblyDefinitionFilePathFromAssemblyName(assemblyName);
+            var setting = Settings.GetAtPath(asmdefPath);
+            if (!setting.SholdChangeCompilerProcess)
+                return;
+
             if (Core.LogEnabled)
                 UnityEngine.Debug.LogFormat("<b>Request to recompile: {0} ({1})</b>", assemblyName, asmdefPath);
+
             AssetDatabase.ImportAsset(asmdefPath);
-#endif
         }
     }
+#endif
 }
 #endif

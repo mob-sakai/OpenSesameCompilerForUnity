@@ -79,12 +79,7 @@ namespace Coffee.AsmdefEx
 
         public bool SholdChangeCompilerProcess
         {
-            get { return IgnoreAccessChecks || !string.IsNullOrEmpty(ModifySymbols); }
-        }
-
-        public bool SholdModifyDefines
-        {
-            get { return IgnoreAccessChecks || !string.IsNullOrEmpty(ModifySymbols); }
+            get { return IgnoreAccessChecks || !string.IsNullOrEmpty(ModifySymbols) || !string.IsNullOrEmpty(CustomCompiler); }
         }
 
         public bool UseCustomCompiler
@@ -473,22 +468,28 @@ namespace Coffee.AsmdefEx
         }
     }
 
+#if !ASMDEF_EX
     [InitializeOnLoad]
     internal class RecompileRequest
     {
         static RecompileRequest()
         {
             var assemblyName = typeof(RecompileRequest).Assembly.GetName().Name;
-#if !ASMDEF_EX
             if (assemblyName == "Coffee.AsmdefEx")
                 return;
 
+            // Should change compiler process for the assembly?
             var asmdefPath = CompilationPipeline.GetAssemblyDefinitionFilePathFromAssemblyName(assemblyName);
+            var setting = Settings.GetAtPath(asmdefPath);
+            if (!setting.SholdChangeCompilerProcess)
+                return;
+
             if (Core.LogEnabled)
                 UnityEngine.Debug.LogFormat("<b>Request to recompile: {0} ({1})</b>", assemblyName, asmdefPath);
+
             AssetDatabase.ImportAsset(asmdefPath);
-#endif
         }
     }
+#endif
 }
 #endif
