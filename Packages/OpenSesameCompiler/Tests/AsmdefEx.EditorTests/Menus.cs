@@ -1,18 +1,27 @@
 #if IGNORE_ACCESS_CHECKS // [ASMDEFEX] DO NOT REMOVE THIS LINE MANUALLY.
+using System.IO;
 using System.Linq;
 using UnityEditor;
 using UnityEditor.Compilation;
 
 namespace Coffee.AsmdefEx
 {
-    internal static class Menus
+    internal class Menus : AssetPostprocessor
     {
         const string kEnableLoggingText = "Asmdef Ex/Enable Logging";
         const string kEnableLoggingSymbol = "ASMDEF_EX_LOG";
-
         const string kDeleteCompilerText = "Asmdef Ex/Delete Compiler";
-
         const string kReloadText = "Asmdef Ex/Reload AsmdefEx.cs For Tests";
+
+        void OnPreprocessAsset()
+        {
+            // When AsmdefEx.cs is changed, sync the AsmdefEx.cs in tests.
+            var asmdefPath = CompilationPipeline.GetAssemblyDefinitionFilePathFromAssemblyName("Coffee.AsmdefEx");
+            var sourcePath = Path.GetDirectoryName(asmdefPath) + "/AsmdefEx.cs";
+            if (sourcePath != assetImporter.assetPath) return;
+
+            Menus.ReloadTests();
+        }
 
         [MenuItem(kEnableLoggingText, false)]
         static void EnableLogging()
@@ -36,7 +45,7 @@ namespace Coffee.AsmdefEx
         }
 
         [MenuItem(kReloadText, false)]
-        static void Reload()
+        public static void ReloadTests()
         {
             var editorTests = CompilationPipeline.GetAssemblyDefinitionFilePathFromAssemblyName("Coffee.AsmdefEx.EditorTests");
             Coffee.AsmdefEx.InspectorGUI.SetExtensionEnabled(editorTests, true);
@@ -69,5 +78,4 @@ namespace Coffee.AsmdefEx
         }
     }
 }
-
 #endif // [ASMDEFEX] DO NOT REMOVE THIS LINE MANUALLY.
