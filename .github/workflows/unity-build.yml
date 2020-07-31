@@ -1,0 +1,82 @@
+name: Unity-Build
+
+on:
+  push:
+    branches:
+      - develop
+    tags:
+      - "!*" # not a tag push
+  pull_request:
+    types:
+      - opened
+      - synchronize
+
+jobs:
+  build-unity:
+    strategy:
+      fail-fast: false
+      matrix:
+        unity:
+          ["2018.3.14f1", "2019.3.9f1-linux-il2cpp", "2020.1.0b5-linux-il2cpp"]
+        include:
+          - unity: 2018.3.14f1
+            license: UNITY_2018_3
+          - unity: 2019.3.9f1-linux-il2cpp
+            license: UNITY_2019_3
+          - unity: 2020.1.0b5-linux-il2cpp
+            license: UNITY_2020_1
+
+    runs-on: ubuntu-latest
+    container:
+      # with linux-il2cpp. image from https://hub.docker.com/r/gableroux/unity3d/tags
+      image: gableroux/unity3d:${{ matrix.unity }}
+
+    steps:
+      # Activate Unity
+      - name: Activate Unity
+        run: |
+          [ -z "$UNITY_LICENSE" ] && exit 1
+
+          echo -n "$UNITY_LICENSE" >> .Unity.ulf
+          /opt/Unity/Editor/Unity -quit -batchmode -nographics -silent-crashes -logFile -manualLicenseFile .Unity.ulf || exit 0
+        env:
+          UNITY_LICENSE: ${{ secrets[matrix.license] }}
+
+      # Checkout
+      # - run: apt update && apt install git -y
+      - uses: actions/checkout@v2
+
+      # Build and run tests using RuntimeUnitTestToolkit (Linux64, mono)
+      - name: Build and run tests using RuntimeUnitTestToolkit (Linux64, mono)
+        run: |
+          /opt/Unity/Editor/Unity -quit -batchmode -nographics -silent-crashes -logFile -projectPath . \
+            -executeMethod UnitTestBuilder.BuildUnitTest /headless /ScriptBackend Mono2x /BuildTarget StandaloneLinux64
+
+      # Run tests using RuntimeUnitTestToolkit (Linux64, mono)
+      - name: Build and run tests using RuntimeUnitTestToolkit (Linux64, mono)
+        run: |
+          ./bin/UnitTest/StandaloneLinux64_Mono2x/test
+
+      ############################################################################
+      # Failure:
+      # create unity activation file and store to artifacts.
+      - name: Create unity activation file
+        if: ${{ failure() }}
+        run: |
+          echo "::error:: the unity activation may have failed. the secret '${{ matrix.license }}' is not found or invalid. manual activation is required.%0A \
+            1. download the artifact's .alf file.%0A \
+            2. Go to https://license.unity3d.com/manual to activate manually.%0A \
+            3. Generate a .ulf file from the .alf file and download it.%0A \
+            4. Go to https://github.com/${{ github.repository }}/settings/secrets and create/update ulf secret.%0A \
+              - Name: ${{ matrix.license }}%0A \
+              - Value: (contents of the .ulf file)%0A \
+            5. Re-run the jobs."
+
+          /opt/Unity/Editor/Unity -quit -batchmode -nographics -logFile -createManualActivationFile || exit 0
+
+      - name: Upload unity activation file
+        uses: actions/upload-artifact@v1
+        if: ${{ failure() }}
+        with:
+          name: Unity_v${{ matrix.unity }}.alf
+          path: ./Unity_v${{ matrix.unity }}.alf

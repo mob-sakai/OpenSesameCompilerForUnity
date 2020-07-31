@@ -1,15 +1,15 @@
 {
   "name": "release-upm",
-  "description": "To release upm package, execute `npm run release` on bash.",
   "version": "1.0.0",
-  "devDependencies": {
-    "git-snapshot": "^2.2.1",
-    "@semantic-release/changelog": "^5.0.1",
-    "@semantic-release/git": "^9.0.0",
-    "@semantic-release/exec": "^5.0.0",
-    "semantic-release": "^17.0.7"
+  "description": "To release the upm package, execute `npm run release` on terminal.",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/mob-sakai"
   },
   "scripts": {
+    "package:format": "npx format-package -w",
+    "package:update": "npx ncu -u && npm install && npm audit fix",
     "release": "npm ci && cd `find Packages/*/.releaserc -exec dirname {} +` && npx semantic-release",
     "release:debug": "npm run release -- --dry-run --no-ci --debug"
   },
@@ -50,10 +50,17 @@
       [
         "@semantic-release/exec",
         {
-          "verifyReleaseCmd": "test -d Samples && mv Samples Samples~ && rm -f Samples.meta || exit 0",
-          "publishCmd": "tar -xzvf *.tgz && git snapshot --prefix=package --branch=upm --remote=${options.repositoryUrl} --tag=${nextRelease.version} --message=\"${nextRelease.version}\n\n${nextRelease.notes}\""
+          "publishCmd": "tar -xzvf *.tgz && git snapshot --prefix=package --branch=upm --remote=${options.repositoryUrl} --tag=${nextRelease.version} --message=\"${nextRelease.version}\n\n${nextRelease.notes}\"",
+          "verifyReleaseCmd": "test -d Samples && mv Samples Samples~ && rm -f Samples.meta || exit 0"
         }
       ]
     ]
+  },
+  "devDependencies": {
+    "@semantic-release/changelog": "^5.0.1",
+    "@semantic-release/exec": "^5.0.0",
+    "@semantic-release/git": "^9.0.0",
+    "git-snapshot": "^2.2.1",
+    "semantic-release": "^17.1.1"
   }
 }
