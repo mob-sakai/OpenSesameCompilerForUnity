@@ -203,17 +203,24 @@ namespace Coffee.AsmdefEx
             try
             {
                 UnityEngine.Debug.LogFormat(k_LogHeader + "Install custom compiler '{0}'", packageId);
-                bool isWindows = Application.platform == RuntimePlatform.WindowsEditor;
 
                 // Download custom compiler package from nuget.
                 {
                     UnityEngine.Debug.LogFormat(k_LogHeader + "Download {0} from nuget: {1}", packageId, url);
                     EditorUtility.DisplayProgressBar("Custom Compiler Installer", string.Format("Download {0} from nuget", packageId), 0.2f);
 
-                    string exe = isWindows ? "certutil.exe" : "curl";
-                    string argsFormat = isWindows ? "-urlcache -f {1} \"{0}\"" : "-o {0} -L {1}";
-                    string args = string.Format(argsFormat, downloadPath, url);
-                    ExecuteCommand(exe, args);
+                    switch (Application.platform)
+                    {
+                        case RuntimePlatform.WindowsEditor:
+                            ExecuteCommand("certutil.exe", string.Format("-urlcache -f {1} \"{0}\"", downloadPath, url));
+                            break;
+                        case RuntimePlatform.OSXEditor:
+                            ExecuteCommand("curl", string.Format("-o {0} -L {1}", downloadPath, url));
+                            break;
+                        case RuntimePlatform.LinuxEditor:
+                            ExecuteCommand("wget", string.Format("-O {0} {1}", downloadPath, url));
+                            break;
+                    }
                 }
 
                 // Extract nuget package (unzip).
@@ -222,10 +229,18 @@ namespace Coffee.AsmdefEx
                     EditorUtility.DisplayProgressBar("Custom Compiler Installer", string.Format("Extract {0}", downloadPath), 0.4f);
 
                     string appPath = EditorApplication.applicationContentsPath;
-                    string exePath = isWindows ? "Tools/7z.exe" : "Tools/7za";
-                    string exe = Path.Combine(appPath, exePath).Replace('/', sep);
                     string args = string.Format("x {0} -o{1}", downloadPath, installPath);
-                    ExecuteCommand(exe, args);
+
+                    switch (Application.platform)
+                    {
+                        case RuntimePlatform.WindowsEditor:
+                            ExecuteCommand(appPath + "¥Tools¥7z.exe", args);
+                            break;
+                        case RuntimePlatform.OSXEditor:
+                        case RuntimePlatform.LinuxEditor:
+                            ExecuteCommand(appPath + "/Tools/7za", args);
+                            break;
+                    }
                 }
 
                 UnityEngine.Debug.LogFormat(k_LogHeader + "Custom compiler '{0}' has been installed in {1}.", packageId, installPath);
