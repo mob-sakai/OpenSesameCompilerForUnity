@@ -1,6 +1,8 @@
 {
     "name": "Coffee.AsmdefEx.EditorTests",
-    "references": [],
+    "references": [
+        "Coffee.AsmdefEx"
+    ],
     "optionalUnityReferences": [
         "TestAssemblies"
     ],

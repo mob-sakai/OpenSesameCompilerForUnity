@@ -1,31 +1,18 @@
-﻿using System.Linq;
+#if IGNORE_ACCESS_CHECKS // [ASMDEFEX] DO NOT REMOVE THIS LINE MANUALLY.
+using System.Linq;
 using UnityEditor;
+using UnityEditor.Compilation;
 
 namespace Coffee.AsmdefEx
 {
     internal static class Menus
     {
-        const string kEnableText = "Assets/Asmdef Ex/Enable";
-        const string kDisableSymbol = "ASMDEF_EX_DISABLE";
-
-        const string kEnableLoggingText = "Assets/Asmdef Ex/Enable Logging";
+        const string kEnableLoggingText = "Asmdef Ex/Enable Logging";
         const string kEnableLoggingSymbol = "ASMDEF_EX_LOG";
 
-        const string kDeleteCompilerText = "Assets/Asmdef Ex/Delete Compiler";
-        const string kInstallCompilerText = "Assets/Asmdef Ex/Install Compiler";
+        const string kDeleteCompilerText = "Asmdef Ex/Delete Compiler";
 
-        [MenuItem(kEnableText, false)]
-        static void Enable()
-        {
-            SwitchSymbol(kDisableSymbol);
-        }
-
-        [MenuItem(kEnableText, true)]
-        static bool Enable_Valid()
-        {
-            Menu.SetChecked(kEnableText, !HasSymbol(kDisableSymbol));
-            return true;
-        }
+        const string kReloadText = "Asmdef Ex/Reload AsmdefEx.cs For Tests";
 
         [MenuItem(kEnableLoggingText, false)]
         static void EnableLogging()
@@ -40,18 +27,21 @@ namespace Coffee.AsmdefEx
             return true;
         }
 
-        [MenuItem(kInstallCompilerText, false, 30)]
-        static void InstallCompiler()
-        {
-            CustomCompiler.GetInstalledPath();
-        }
-
-        [MenuItem(kDeleteCompilerText, false, 31)]
+        [MenuItem(kDeleteCompilerText, false)]
         static void DeleteCompiler()
         {
             var path = CustomCompiler.GetInstalledPath();
             if (!string.IsNullOrEmpty(path))
                 FileUtil.DeleteFileOrDirectory(path);
+        }
+
+        [MenuItem(kReloadText, false)]
+        static void Reload()
+        {
+            var editorTests = CompilationPipeline.GetAssemblyDefinitionFilePathFromAssemblyName("Coffee.AsmdefEx.EditorTests");
+            Coffee.AsmdefEx.InspectorGUI.SetExtensionEnabled(editorTests, true);
+            var runtimeTests = CompilationPipeline.GetAssemblyDefinitionFilePathFromAssemblyName("Coffee.AsmdefEx.RuntimeTests");
+            Coffee.AsmdefEx.InspectorGUI.SetExtensionEnabled(runtimeTests, true);
         }
 
         static string[] GetSymbols()
@@ -79,3 +69,5 @@ namespace Coffee.AsmdefEx
         }
     }
 }
+
+#endif // [ASMDEFEX] DO NOT REMOVE THIS LINE MANUALLY.

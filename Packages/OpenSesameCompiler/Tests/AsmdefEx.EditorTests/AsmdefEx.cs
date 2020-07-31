@@ -11,7 +11,7 @@ using UnityEditor;
 using UnityEngine;
 using UnityEditor.Compilation;
 
-namespace Coffee.AsmdefEx
+namespace __GENARATED_ASMDEF__.Coffee.AsmdefEx.EditorTests
 {
     internal static class PackageSettings
     {
@@ -218,7 +218,7 @@ namespace Coffee.AsmdefEx
                             ExecuteCommand("curl", string.Format("-o {0} -L {1}", downloadPath, url));
                             break;
                         case RuntimePlatform.LinuxEditor:
-                            ExecuteCommand("wget", string.Format("-o {0} -r {1}", downloadPath, url));
+                            ExecuteCommand("wget", string.Format("-O {0} {1}", downloadPath, url));
                             break;
                     }
                 }
