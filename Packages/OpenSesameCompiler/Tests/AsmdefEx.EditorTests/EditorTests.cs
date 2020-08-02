@@ -11,21 +11,46 @@ using UnityEngine.TestTools;
 namespace Coffee.AsmdefEx.EditorTests
 {
 #if UNITY_EDITOR
+    class ScriptDefineSymbolTest
+    {
+        [Test]
+        public void DefineSymbols()
+        {
+#if OSC_TEST
+            string log = "OSC_TEST is defined.";
+#else
+            string log = "OSC_TEST is not defined.";
+#endif
+            Assert.AreEqual(log, "OSC_TEST is defined.");
+        }
+
+        [Test]
+        public void RemoveSymbols()
+        {
+#if UNITY_5_3_OR_NEWER
+            string log = "UNITY_5_3_OR_NEWER is defined.";
+#else
+            string log = "UNITY_5_3_OR_NEWER is not defined.";
+#endif
+            Assert.AreEqual(log, "UNITY_5_3_OR_NEWER is not defined.");
+        }
+    }
+
     class UnityEditorTest
     {
-        [UnityTest]
-        public IEnumerator InternalMethod()
-        {
-            LogAssert.Expect(LogType.Log, "delayed");
-            EditorApplication.CallDelayed(() => Debug.Log("delayed"), 1);
-            yield return null;
+        // [UnityTest]
+        // public IEnumerator InternalMethod()
+        // {
+        //     LogAssert.Expect(LogType.Log, "delayed");
+        //     EditorApplication.CallDelayed(() => Debug.Log("delayed"), 1);
+        //     yield return null;
 
-            float startTime = Time.realtimeSinceStartup;
-            while ((Time.realtimeSinceStartup - startTime) < 1.1f)
-            {
-                yield return null;
-            }
-        }
+        //     float startTime = Time.realtimeSinceStartup;
+        //     while ((Time.realtimeSinceStartup - startTime) < 1.1f)
+        //     {
+        //         yield return null;
+        //     }
+        // }
 
         [Test]
         public void PrivateCreateInstance()
