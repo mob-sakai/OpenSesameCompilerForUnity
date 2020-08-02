@@ -1,4 +1,4 @@
-name: Unity-Build
+name: Unity Build
 
 on:
   push:
@@ -17,66 +17,119 @@ jobs:
       fail-fast: false
       matrix:
         unity:
-          ["2018.3.14f1", "2019.3.9f1-linux-il2cpp", "2020.1.0b5-linux-il2cpp"]
+          ["2018.3.14f1", "2019.3.9f1-linux-il2cpp", "2020.1.0f1-linux-il2cpp"]
         include:
           - unity: 2018.3.14f1
-            license: UNITY_2018_3
+            license_id: UNITY_2018_3
           - unity: 2019.3.9f1-linux-il2cpp
-            license: UNITY_2019_3
-          - unity: 2020.1.0b5-linux-il2cpp
-            license: UNITY_2020_1
+            license_id: UNITY_2019_3
+          - unity: 2020.1.0f1-linux-il2cpp
+            license_id: UNITY_2020_1
 
     runs-on: ubuntu-latest
     container:
-      # with linux-il2cpp. image from https://hub.docker.com/r/gableroux/unity3d/tags
+      # Use Unity image from https://hub.docker.com/r/gableroux/unity3d/tags
       image: gableroux/unity3d:${{ matrix.unity }}
 
     steps:
-      # Activate Unity
-      - name: Activate Unity
+      # Activate Unity Editor
+      - name: Activate Unity Editor
         run: |
           [ -z "$UNITY_LICENSE" ] && exit 1
 
           echo -n "$UNITY_LICENSE" >> .Unity.ulf
-          /opt/Unity/Editor/Unity -quit -batchmode -nographics -silent-crashes -logFile -manualLicenseFile .Unity.ulf || exit 0
+          /opt/Unity/Editor/Unity -quit -batchmode -nographics -silent-crashes -logFile -manualLicenseFile .Unity.ulf \
+            | grep -E 'LICENSE SYSTEM.*\w{32} != \w{32}' && FAILED=true
+
+          if [ $FAILED ]; then
+            echo "::set-env name=UNITY_VERSION::`echo ${{ matrix.unity }} | cut -d '-' -f 1`"
+            echo "::error:: the unity activation may have failed. the secret '${{ matrix.license_id }}' is not found or invalid. manual activation is required.%0A \
+              1. download the artifact's .alf file.%0A \
+              2. Go to https://license.unity3d.com/manual to activate manually.%0A \
+              3. Generate a .ulf file from the .alf file and download it.%0A \
+              4. Go to https://github.com/${{ github.repository }}/settings/secrets and create/update ulf secret.%0A \
+                - Name: ${{ matrix.license_id }}%0A \
+                - Value: (contents of the .ulf file)%0A \
+              5. Re-run the jobs."
+
+            /opt/Unity/Editor/Unity -quit -batchmode -nographics -logFile -createManualActivationFile || exit 1
+          fi
         env:
-          UNITY_LICENSE: ${{ secrets[matrix.license] }}
-
-      # Checkout
-      # - run: apt update && apt install git -y
-      - uses: actions/checkout@v2
-
-      # Build and run tests using RuntimeUnitTestToolkit (Linux64, mono)
-      - name: Build and run tests using RuntimeUnitTestToolkit (Linux64, mono)
-        run: |
-          /opt/Unity/Editor/Unity -quit -batchmode -nographics -silent-crashes -logFile -projectPath . \
-            -executeMethod UnitTestBuilder.BuildUnitTest /headless /ScriptBackend Mono2x /BuildTarget StandaloneLinux64
-
-      # Run tests using RuntimeUnitTestToolkit (Linux64, mono)
-      - name: Build and run tests using RuntimeUnitTestToolkit (Linux64, mono)
-        run: |
-          ./bin/UnitTest/StandaloneLinux64_Mono2x/test
-
-      ############################################################################
-      # Failure:
-      # create unity activation file and store to artifacts.
-      - name: Create unity activation file
-        if: ${{ failure() }}
-        run: |
-          echo "::error:: the unity activation may have failed. the secret '${{ matrix.license }}' is not found or invalid. manual activation is required.%0A \
-            1. download the artifact's .alf file.%0A \
-            2. Go to https://license.unity3d.com/manual to activate manually.%0A \
-            3. Generate a .ulf file from the .alf file and download it.%0A \
-            4. Go to https://github.com/${{ github.repository }}/settings/secrets and create/update ulf secret.%0A \
-              - Name: ${{ matrix.license }}%0A \
-              - Value: (contents of the .ulf file)%0A \
-            5. Re-run the jobs."
-
-          /opt/Unity/Editor/Unity -quit -batchmode -nographics -logFile -createManualActivationFile || exit 0
+          UNITY_LICENSE: ${{ secrets[matrix.license_id] }}
 
       - name: Upload unity activation file
         uses: actions/upload-artifact@v1
         if: ${{ failure() }}
         with:
           name: Unity_v${{ matrix.unity }}.alf
-          path: ./Unity_v${{ matrix.unity }}.alf
+          path: Unity_v${{ env.UNITY_VERSION }}.alf
+
+      # Checkout
+      - uses: actions/checkout@v2
+
+      # Cache Unity Library
+      # - name: Cache Unity Library
+      #   uses: actions/cache@v2
+      #   with:
+      #     path: |
+      #       ${{ github.workspace }}/Library/OpenSesame.*
+      #       ${{ github.workspace }}/Library/PackageCache
+      #     key: ${{ runner.os }}-${{ matrix.unity }}-${{ hashFiles('Packages/**/package.json') }}
+      #     restore-keys: ${{ runner.os }}-${{ matrix.unity }}-
+
+      # Build editor tests
+      - name: Build editor tests
+        run: |
+          /opt/Unity/Editor/Unity -batchmode -nographics -silent-crashes -logFile -buildTarget Linux64 -projectPath . \
+            -runEditorTests -editorTestsResultFile ./editor_unittest.xml \
+            || [ -e ./editor_unittest.xml ] && exit 0 || exit 1
+
+      # Validate editor test results
+      - name: Validate editor test results
+        run: |
+          SUMMARY=`grep '<test-run ' ./editor_unittest.xml \
+            | perl -pe 's/.*(result="[^"]*.*asserts="[^"]*).*/$1/' \
+            | tr -d '"'`
+
+          echo "${SUMMARY}"
+
+          FAILED=`cat editor_unittest.xml \
+            | perl -0pe 's/(<\/test-case>).*?(<test-case [^>]+>)/$1\n$2/sm' \
+            | perl -0pe 's/^.*?(<test-case )/$1/sm' \
+            | perl -pe 's/^ *(.*)\n/$1#__LF__#/g' \
+            | perl -pe 's/(<\/test-case>)/$1\n/g' \
+            | grep 'result="Failed"' \
+            | perl -pe 's/.*fullname="([^"]*).*<message><!\[CDATA\[ *(.*)\]\]><\/message>.*/[NG] $1#__LF__#$2/' \
+            | perl -pe 's/(#__LF__#|\n)/%0A/g'`
+
+          echo "${FAILED}"
+
+          if [ -n "`echo ${FAILED} | grep '\[NG\]'`" ]; then
+            echo "::error:: ${FAILED}"
+            exit 1
+          fi
+
+      # Build runtime tests using RuntimeUnitTestToolkit
+      - name: Build runtime tests using RuntimeUnitTestToolkit
+        run: |
+          echo ${matrix.unity} | grep il2cpp && SCRIPT_BACKEND=IL2CPP || SCRIPT_BACKEND=Mono2x
+
+          /opt/Unity/Editor/Unity -quit -batchmode -nographics -silent-crashes -logFile -projectPath . \
+            -executeMethod UnitTestBuilder.BuildUnitTest /Headless /ScriptBackend ${SCRIPT_BACKEND} /BuildTarget StandaloneLinux64 /BuildPath ./runtime_unittest \
+            || [ -e ./runtime_unittest ] && exit 0 || exit 1
+
+      # Validate runtime test results
+      - name: Validate runtime test results
+        run: |
+          FAILED=`./runtime_unittest \
+            | perl -0pe 's/\n/#__LF__#/g' \
+            | perl -pe 's/(\[OK\]|\[NG\])/\n$1/g' \
+            | grep '^\[NG\]' \
+            | perl -pe 's/(#__LF__#|\n)/%0A/g'`
+
+          echo "${FAILED}"
+
+          if [ -n "`echo ${FAILED} | grep '\[NG\]'`" ]; then
+            echo "::error:: ${FAILED}"
+            exit 1
+          fi
