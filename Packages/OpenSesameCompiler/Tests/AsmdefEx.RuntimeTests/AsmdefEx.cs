@@ -15,7 +15,7 @@ namespace __GENARATED_ASMDEF__.Coffee.AsmdefEx.RuntimeTests
 {
     internal static class PackageSettings
     {
-        public const string PackageId = "OpenSesame.Net.Compilers.3.4.0-beta.1";
+        public const string PackageId = "OpenSesame.Net.Compilers.3.4.0-beta.3";
     }
 
     internal static class ReflectionExtensions
