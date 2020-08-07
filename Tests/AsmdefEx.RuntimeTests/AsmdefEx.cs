@@ -11,7 +11,7 @@ using UnityEditor;
 using UnityEngine;
 using UnityEditor.Compilation;
 
-namespace Coffee.AsmdefEx
+namespace __GENARATED_ASMDEF__.Coffee.AsmdefEx.RuntimeTests
 {
     internal static class PackageSettings
     {

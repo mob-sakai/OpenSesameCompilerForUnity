@@ -1,3 +1,30 @@
+# [1.0.0-preview.24](https://github.com/mob-sakai/OpenSesameCompilerForUnity/compare/v1.0.0-preview.23...v1.0.0-preview.24) (2020-08-07)
+
+
+### Bug Fixes
+
+* AsmdefEx.cs in package was unexpectedly deleted ([4ffd27a](https://github.com/mob-sakai/OpenSesameCompilerForUnity/commit/4ffd27a17c4855d67154d444b097a1b9dc346b9e))
+* assembly is repeatedly compiled when IgnoreAccessChecks=false ([592d81c](https://github.com/mob-sakai/OpenSesameCompilerForUnity/commit/592d81c9207d4f124fa9f5e97309b2a70be03193))
+
+
+### Features
+
+* hide custom compiler option ([7eb27e5](https://github.com/mob-sakai/OpenSesameCompilerForUnity/commit/7eb27e51d32f40a400f338cb275d0124866615ad))
+* install custom compiler with nuget package id ([4b754cd](https://github.com/mob-sakai/OpenSesameCompilerForUnity/commit/4b754cda3e78a8fc295063574010b0cd1b36c159))
+* Reload only when there are changes ([9bb6af8](https://github.com/mob-sakai/OpenSesameCompilerForUnity/commit/9bb6af8c522d12ff45378da765e4d2cd17861b11))
+* runtime support ([cbea4b5](https://github.com/mob-sakai/OpenSesameCompilerForUnity/commit/cbea4b52c8bbee90eba0834cc7180f47b43fb1d7))
+* skip the initial compile request if not needed ([35845c9](https://github.com/mob-sakai/OpenSesameCompilerForUnity/commit/35845c9d9b165ab7a099545e4429c60421f000f1))
+* support linux ([3477df2](https://github.com/mob-sakai/OpenSesameCompilerForUnity/commit/3477df260418b766ec4c736d1b3c3fe23072e860))
+* update OpenSesameCompiler to 3.4.0-beta.3 ([3eb9aea](https://github.com/mob-sakai/OpenSesameCompilerForUnity/commit/3eb9aeaa747d3fffe8b5dfe9c36c2a5f4d4c900c))
+
+
+### BREAKING CHANGES
+
+* `IgnoresAccessChecksTo` attribute is required to access internals/privates in other assemblies as following:
+```cs
+[assembly: System.Runtime.CompilerServices.IgnoresAccessChecksTo("<TargetAssemblyName>")]
+```
+
 # [1.0.0-preview.23](https://github.com/mob-sakai/OpenSesameCompilerForUnity/compare/v1.0.0-preview.22...v1.0.0-preview.23) (2020-07-26)
 
 

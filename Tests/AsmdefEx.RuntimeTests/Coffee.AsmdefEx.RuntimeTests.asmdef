@@ -1,0 +1,16 @@
+{
+    "name": "Coffee.AsmdefEx.RuntimeTests",
+    "references": [
+        "Coffee.AsmdefEx.RuntimeTests.InternalLibrary"
+    ],
+    "optionalUnityReferences": [
+        "TestAssemblies"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": false,
+    "defineConstraints": []
+}

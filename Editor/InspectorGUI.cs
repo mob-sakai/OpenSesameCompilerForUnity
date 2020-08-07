@@ -131,13 +131,12 @@ namespace Coffee.AsmdefEx
             {
                 GUILayout.BeginVertical(EditorStyles.helpBox);
 
-
                 // Enable.
                 bool enabled = GetExtensionEnabled(importer.assetPath);
                 using (var ccs = new EditorGUI.ChangeCheckScope())
                 {
                     enabled = EditorGUILayout.ToggleLeft(s_EnableText, enabled);
-                    if (ccs.changed)
+                    if (GetAssemblyName(importer.assetPath) != "Coffee.AsmdefEx" && ccs.changed)
                     {
                         EditorApplication.delayCall += () => SetExtensionEnabled(importer.assetPath, enabled);
                     }
@@ -159,7 +158,6 @@ namespace Coffee.AsmdefEx
                     settingChanged |= ccs.changed;
                 }
 
-
                 GUILayout.Space(10);
                 using (new GUILayout.VerticalScope(EditorStyles.helpBox))
                 {
@@ -168,11 +166,7 @@ namespace Coffee.AsmdefEx
                     {
                         if (GUILayout.Button(s_ReloadText, EditorStyles.miniButton))
                         {
-                            EditorApplication.delayCall += () =>
-                            {
-                                SetExtensionEnabled(importer.assetPath, false);
-                                SetExtensionEnabled(importer.assetPath, true);
-                            };
+                            EditorApplication.delayCall += () => SetExtensionEnabled(importer.assetPath, true);
                         }
                     }
 
@@ -204,6 +198,7 @@ namespace Coffee.AsmdefEx
                 enabled = File.Exists(dst);
                 s_EnableAsmdefs[asmdefPath] = enabled;
             }
+
             return enabled;
         }
 
@@ -213,15 +208,44 @@ namespace Coffee.AsmdefEx
             string dst = Path.GetDirectoryName(asmdefPath) + "/AsmdefEx.cs";
             if (enabled)
             {
+                string src = GenerateAsmdefEx(asmdefPath);
+
+                // Already copied.
+                if (File.Exists(dst))
+                {
+                    using (var md5 = MD5.Create())
+                    using (var srcStream = File.OpenRead(src))
+                    using (var dstStream = File.OpenRead(dst))
+                        if (md5.ComputeHash(srcStream).SequenceEqual(md5.ComputeHash(dstStream)))
+                            return;
+                }
+
                 // Copy AsmdefEx.cs to assembly.
-                const string src = "Packages/com.coffee.open-sesame-compiler/Editor/AsmdefEx.cs";
-                AssetDatabase.CopyAsset(src, dst);
+                File.Copy(src, dst, true);
+                AssetDatabase.ImportAsset(dst);
             }
             else
             {
                 // Delete AsmdefEx.cs from assembly.
                 AssetDatabase.DeleteAsset(dst);
             }
+        }
+
+        static string GenerateAsmdefEx(string asmdefPath)
+        {
+            var source = CompilationPipeline.GetAssemblyDefinitionFilePathFromAssemblyName("Coffee.AsmdefEx");
+            string src = Path.Combine(Path.GetDirectoryName(source), "AsmdefEx.cs");
+
+            var text = File.ReadAllText(src)
+                .Replace(
+                    "namespace Coffee.AsmdefEx",
+                    "namespace __GENARATED_ASMDEF__." + GetAssemblyName(asmdefPath)
+                );
+
+            var tmp = Path.GetTempFileName();
+            File.WriteAllText(tmp, text);
+
+            return tmp;
         }
 
         static string GetAssemblyName(string asmdefPath = "")
