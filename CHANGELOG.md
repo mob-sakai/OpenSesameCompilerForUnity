@@ -1,3 +1,10 @@
+# [1.0.0-preview.26](https://github.com/mob-sakai/OpenSesameCompilerForUnity/compare/v1.0.0-preview.25...v1.0.0-preview.26) (2020-08-11)
+
+
+### Bug Fixes
+
+* Not recompiling on first launch ([88c05b7](https://github.com/mob-sakai/OpenSesameCompilerForUnity/commit/88c05b7a7d4b777cd952adbbcfacb7848515f50d))
+
 # [1.0.0-preview.25](https://github.com/mob-sakai/OpenSesameCompilerForUnity/compare/v1.0.0-preview.24...v1.0.0-preview.25) (2020-08-11)
 
 
