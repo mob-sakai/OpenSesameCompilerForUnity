@@ -17,7 +17,8 @@ namespace Coffee.AsmdefEx
         {
             // When AsmdefEx.cs is changed, sync the AsmdefEx.cs in tests.
             var asmdefPath = CompilationPipeline.GetAssemblyDefinitionFilePathFromAssemblyName("Coffee.AsmdefEx");
-            var sourcePath = Path.GetDirectoryName(asmdefPath) + "/AsmdefEx.cs";
+            var sourcePath = Path.GetDirectoryName(asmdefPath).Replace('\\', '/') + "/AsmdefEx.cs";
+
             if (sourcePath != assetImporter.assetPath) return;
 
             Menus.ReloadTests();
