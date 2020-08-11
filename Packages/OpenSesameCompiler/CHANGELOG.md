@@ -1,3 +1,10 @@
+# [1.0.0-preview.25](https://github.com/mob-sakai/OpenSesameCompilerForUnity/compare/v1.0.0-preview.24...v1.0.0-preview.25) (2020-08-11)
+
+
+### Features
+
+* support windows ([511bc47](https://github.com/mob-sakai/OpenSesameCompilerForUnity/commit/511bc47ae34021eb78720dea2a5b36e4ad208c25))
+
 # [1.0.0-preview.24](https://github.com/mob-sakai/OpenSesameCompilerForUnity/compare/v1.0.0-preview.23...v1.0.0-preview.24) (2020-08-07)
 
 
