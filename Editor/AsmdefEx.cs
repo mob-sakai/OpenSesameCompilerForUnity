@@ -15,7 +15,7 @@ namespace Coffee.AsmdefEx
 {
     internal static class PackageSettings
     {
-        public const string PackageId = "OpenSesame.Net.Compilers.3.4.0-beta.3";
+        public const string PackageId = "OpenSesame.Net.Compilers.3.4.0-beta.1";
     }
 
     internal static class ReflectionExtensions
@@ -186,7 +186,7 @@ namespace Coffee.AsmdefEx
         {
             char sep = Path.DirectorySeparatorChar;
             string url = "https://globalcdn.nuget.org/packages/" + packageId.ToLower() + ".nupkg";
-            string downloadPath = Path.GetTempFileName() + ".nuget";
+            string downloadPath = ("Temp/" + Path.GetFileName(Path.GetTempFileName())).Replace('/', sep);
             string installPath = ("Library/" + packageId).Replace('/', sep);
             string cscToolExe = (installPath + "/tools/csc.exe").Replace('/', sep);
 
@@ -212,7 +212,7 @@ namespace Coffee.AsmdefEx
                     switch (Application.platform)
                     {
                         case RuntimePlatform.WindowsEditor:
-                            ExecuteCommand("certutil.exe", string.Format("-urlcache -f {1} \"{0}\"", downloadPath, url));
+                            ExecuteCommand("PowerShell.exe", string.Format("curl -O {0} {1}", downloadPath, url));
                             break;
                         case RuntimePlatform.OSXEditor:
                             ExecuteCommand("curl", string.Format("-o {0} -L {1}", downloadPath, url));
@@ -228,13 +228,13 @@ namespace Coffee.AsmdefEx
                     UnityEngine.Debug.LogFormat(k_LogHeader + "Extract {0} to {1} with 7z", downloadPath, installPath);
                     EditorUtility.DisplayProgressBar("Custom Compiler Installer", string.Format("Extract {0}", downloadPath), 0.4f);
 
-                    string appPath = EditorApplication.applicationContentsPath;
+                    string appPath = EditorApplication.applicationContentsPath.Replace('/', sep);
                     string args = string.Format("x {0} -o{1}", downloadPath, installPath);
 
                     switch (Application.platform)
                     {
                         case RuntimePlatform.WindowsEditor:
-                            ExecuteCommand(appPath + "¥Tools¥7z.exe", args);
+                            ExecuteCommand(appPath + "\\Tools\\7z.exe", args);
                             break;
                         case RuntimePlatform.OSXEditor:
                         case RuntimePlatform.LinuxEditor:
