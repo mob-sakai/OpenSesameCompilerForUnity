@@ -1,7 +1,9 @@
 {
     "name": "Coffee.AsmdefEx.RuntimeTests.InternalLibrary",
     "references": [],
-    "optionalUnityReferences": [],
+    "optionalUnityReferences": [
+        "TestAssemblies"
+    ],
     "includePlatforms": [],
     "excludePlatforms": [],
     "allowUnsafeCode": false,
