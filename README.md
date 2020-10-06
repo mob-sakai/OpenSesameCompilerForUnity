@@ -1,6 +1,8 @@
 Open Sesame Compiler For Unity
 ===
 
+NOTE: This project has been integrated into [CSharpCompilerSettingsForUnity](https://github.com/mob-sakai/CSharpCompilerSettingsForUnity), so we are NOT continuing development in this repository.
+
 A custom Roslyn compiler and editor extension to access internals/privates for Unity.  
 In other words, you can access to **any internals/privates** in other assemblies, **without reflection**.
 
